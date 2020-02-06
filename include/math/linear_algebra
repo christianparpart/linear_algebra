@@ -1,0 +1,11 @@
+// vim:syntax=cpp:ft=cpp
+
+#include <math/synopsis.h>                      // 6.3
+// #include <math/engine_types.h>                  // 6.4
+// #include <math/math_object_types.h>             // 6.5
+// #include <math/operation_traits.h>              // 6.6
+// #include <math/element_promotion_traits.h>      // 6.7
+// #include <math/engine_promotion_traits.h>       // 6.8
+// #include <math/arithmetic_traits.h>             // 6.9
+// #include <math/arithmetic_operators.h>          // 6.10
+
