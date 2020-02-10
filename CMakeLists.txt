@@ -59,7 +59,14 @@ endif()
 # ----------------------------------------------------------------------------
 # LIBRARY
 
+set(LINEAR_ALGEBRA_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/include/math/linear_algebra
+	${CMAKE_CURRENT_SOURCE_DIR}/include/math/linear_algebra.h
+)
+
 add_library(linear_algebra INTERFACE)
+target_sources(linear_algebra INTERFACE ${LINEAR_ALGEBRA_SRCS})
+
 target_include_directories(linear_algebra INTERFACE
     $<BUILD_INTERFACE:${${PROJECT_NAME}_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>)

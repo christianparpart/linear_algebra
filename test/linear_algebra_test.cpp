@@ -12,10 +12,98 @@
  * limitations under the License.
  */
 
+#include <iostream>
 #include <math/linear_algebra>
 
 #include <catch2/catch.hpp>
 
-TEST_CASE("linear_algebra.draft")
+namespace { // {{{ helper
+    template <typename ET, typename OT>
+    std::ostream& operator<<(std::ostream& os, math::vector<ET, OT>const& _vec)
+    {
+        os << '(';
+        for (std::size_t i = 0; i < _vec.size(); ++i)
+        {
+            if (i != 0)
+                os << ", ";
+            os << _vec(i);
+        }
+        os << ')';
+        return os;
+    }
+
+    template <typename ET, typename OT>
+    std::ostream& operator<<(std::ostream& os, math::matrix<ET, OT> const& _mat)
+    {
+        os << '{';
+        for (std::size_t i = 0; i < _mat.rows(); ++i)
+        {
+            if (i != 0)
+                os << ", ";
+            os << '{';
+            for (std::size_t j = 0; j < _mat.columns(); ++j)
+            {
+                if (j != 0)
+                    os << ", ";
+                os << _mat(i, j);
+            }
+            os << '}';
+        }
+        os << '}';
+        return os;
+    }
+} // }}}
+
+template <typename T, size_t N> using vec = math::fs_vector<T, N>;
+template <size_t N> using ivec = vec<int, N>;
+
+template <typename T, size_t R, size_t C> using mat = math::fs_matrix<T, R, C>;
+template <size_t R, size_t C> using imat = mat<int, R, C>;
+
+using namespace std;
+
+TEST_CASE("vector.neg")
 {
+    auto static constexpr v1 = ivec<3>{0, 1, 2};
+    auto static const v2 = -v1;
+    auto static const v3 = ivec<3>{0, -1, -2};
+
+    REQUIRE(v2 == v3);
+}
+
+TEST_CASE("vector.add")
+{
+    auto static constexpr v1 = ivec<3>{0, 1, 2};
+    auto static constexpr v2 = ivec<3>{3, 4, 5};
+    auto static constexpr v3 = v1 + v2;
+    auto static constexpr expected = ivec<3>{3,5,7};
+
+    cout << "   " << v1 << '\n'
+         << " + " << v2 << '\n'
+         << " = " << v3 << '\n';
+
+    REQUIRE(v3 == expected);
+}
+
+TEST_CASE("matrix.neg")
+{
+    auto static constexpr m1 = imat<2, 2>{1,-2,3,-4};
+    auto static constexpr m2 = -m1;
+    auto static constexpr m3 = imat<2, 2>{-1,2,-3,4};
+
+    REQUIRE(m2 == m3);
+}
+
+TEST_CASE("matrix.add")
+{
+    auto static constexpr m1 = imat<2, 2>{1,2,3,4};
+    auto static constexpr m2 = imat<2, 2>{2,3,4,5};
+    auto static constexpr m3 = m1 + m2;
+    auto static constexpr expected = imat<2, 2>{3,5,7,9};
+
+    cout << "   " << m1 << '\n'
+         << " + " << m2 << '\n'
+         << " = " << m3 << '\n';
+
+    REQUIRE(m3 == expected);
 }
