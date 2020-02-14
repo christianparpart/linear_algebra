@@ -13,7 +13,7 @@
  */
 
 #include <iostream>
-#include <math/linear_algebra>
+#include <linear_algebra>
 
 #include <catch2/catch.hpp>
 
