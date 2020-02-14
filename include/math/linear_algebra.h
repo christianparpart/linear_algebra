@@ -723,7 +723,11 @@ struct matrix_subtraction_engine_traits
 };
 
 template <class OT, class ET1, class ET2>
-using matrix_subtraction_engine_t = typename OT::template element_subtraction_traits<ET1, ET2>;
+using matrix_subtraction_engine_t = typename OT::template engine_subtraction_traits<
+    OT, // TODO: OTR
+    ET1,
+    ET2
+>::engine_type; // XXX:DEFECT? wrt `::engine_type`?
 // }}}
 // {{{ 6.8.4 | engine promotion traits | matrix_multiplication_engine_traits<OT, ET1, ET2>
 template <class OT, class ET1, class ET2>
@@ -830,7 +834,13 @@ struct matrix_subtraction_traits<OT, vector<ET1, OT1>, vector<ET2, OT2>>
     using engine_type = matrix_subtraction_engine_t<OT, ET1, ET2>;
     using op_traits = OT;
     using result_type = vector<engine_type, op_traits>;
-    static result_type subtract(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2);
+    constexpr static result_type subtract(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2)
+    {
+        result_type v3{};
+        for (decltype(v1.size()) i = 0; i < v1.size(); ++i)
+            v3(i) = v1(i) - v2(i);
+        return v3;
+    }
 };
 
 template <class OT, class ET1, class OT1, class ET2, class OT2>
@@ -839,7 +849,17 @@ struct matrix_subtraction_traits<OT, matrix<ET1, OT1>, matrix<ET2, OT2>>
     using engine_type = matrix_subtraction_engine_t<OT, ET1, ET2>;
     using op_traits = OT;
     using result_type = matrix<engine_type, op_traits>;
-    static result_type subtract(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2);
+    constexpr static result_type subtract(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2)
+    {
+        using size_type = std::size_t;
+        result_type m{};
+
+        for (size_type i = 0; i < m1.rows(); ++i)
+            for (size_type j = 0; j < m1.columns(); ++j)
+                m(i, j) = m1(i, j) - m2(i, j);
+
+        return m;
+    }
 };
 
 template <class OT, class OP1, class OP2>
@@ -1065,7 +1085,7 @@ constexpr operator+(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2)
 //
 template <class ET1, class OT1, class ET2, class OT2>
 inline auto
-operator-(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2)
+constexpr operator-(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2)
 {
     using op_traits = matrix_operation_traits_selector_t<OT1, OT2>;
     using op1_type = vector<ET1, OT1>;
@@ -1076,7 +1096,7 @@ operator-(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2)
 
 template <class ET1, class OT1, class ET2, class OT2>
 inline auto
-operator-(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2)
+constexpr operator-(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2)
 {
     using op_traits = matrix_operation_traits_selector_t<OT1, OT2>;
     using op1_type = matrix<ET1, OT1>;

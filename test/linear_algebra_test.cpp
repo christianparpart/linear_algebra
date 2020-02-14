@@ -77,11 +77,15 @@ TEST_CASE("vector.add")
     auto static constexpr v2 = ivec<3>{3, 4, 5};
     auto static constexpr v3 = v1 + v2;
     auto static constexpr expected = ivec<3>{3,5,7};
+    REQUIRE(v3 == expected);
+}
 
-    cout << "   " << v1 << '\n'
-         << " + " << v2 << '\n'
-         << " = " << v3 << '\n';
-
+TEST_CASE("vector.sub")
+{
+    auto static constexpr v1 = ivec<3>{5, 2, 1};
+    auto static constexpr v2 = ivec<3>{1, 2, 5};
+    auto static constexpr v3 = v1 - v2;
+    auto static constexpr expected = ivec<3>{4, 0, -4};
     REQUIRE(v3 == expected);
 }
 
@@ -105,5 +109,14 @@ TEST_CASE("matrix.add")
          << " + " << m2 << '\n'
          << " = " << m3 << '\n';
 
+    REQUIRE(m3 == expected);
+}
+
+TEST_CASE("matrix.sub")
+{
+    auto static constexpr m1 = imat<2, 2>{5,2,1,0};
+    auto static constexpr m2 = imat<2, 2>{0,2,4,8};
+    auto static constexpr m3 = m1 - m2;
+    auto static constexpr expected = imat<2, 2>{5,0,-3,-8};
     REQUIRE(m3 == expected);
 }
