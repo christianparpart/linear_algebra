@@ -1,3 +1,4 @@
 /.clangd/
+/sandbox/
 /build/
 /compile_commands.json
