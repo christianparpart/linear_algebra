@@ -88,6 +88,37 @@ TEST_CASE("vector.sub")
     REQUIRE(v3 == expected);
 }
 
+
+TEST_CASE("vector.mul")
+{
+    SECTION("inner")
+    {
+        auto static constexpr v1 = ivec<3>{5, 2, 3};
+        auto static constexpr v2 = ivec<3>{1, 2, 5};
+        auto static constexpr v3 = v1 * v2;
+        auto static constexpr expected = 24;
+        REQUIRE(v3 == expected);
+    }
+
+    // SECTION("scalar left")
+    // {
+    //     auto static constexpr v1 = ivec<3>{5, 2, 3};
+    //     auto static constexpr s1 = 4;
+    //     auto static constexpr v2 = s1 * v1;
+    //     auto static constexpr expected = ivec<3>{20, 8, 12};
+    //     REQUIRE(v2 == expected);
+    // }
+
+    // SECTION("scalar right ")
+    // {
+    //     auto static constexpr v1 = ivec<3>{5, 2, 3};
+    //     auto static constexpr s1 = 4;
+    //     auto static constexpr v2 = v1 * s1;
+    //     auto static constexpr expected = ivec<3>{20, 8, 12};
+    //     REQUIRE(v2 == expected);
+    // }
+}
+
 TEST_CASE("matrix.neg")
 {
     auto static constexpr m1 = imat<2, 2>{1,-2,3,-4};
