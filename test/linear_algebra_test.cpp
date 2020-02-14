@@ -12,14 +12,16 @@
  * limitations under the License.
  */
 
-#include <iostream>
+#include <ostream>
 #include <linear_algebra>
 
 #include <catch2/catch.hpp>
 
+// XXX later on, split up in per-operation tests (negation, addition, subtraction, multiplication, ...)
+
 namespace { // {{{ helper
     template <typename ET, typename OT>
-    std::ostream& operator<<(std::ostream& os, math::vector<ET, OT>const& _vec)
+    std::ostream& operator<<(std::ostream& os, LINEAR_ALGEBRA_NAMESPACE::vector<ET, OT>const& _vec)
     {
         os << '(';
         for (std::size_t i = 0; i < _vec.size(); ++i)
@@ -33,7 +35,7 @@ namespace { // {{{ helper
     }
 
     template <typename ET, typename OT>
-    std::ostream& operator<<(std::ostream& os, math::matrix<ET, OT> const& _mat)
+    std::ostream& operator<<(std::ostream& os, LINEAR_ALGEBRA_NAMESPACE::matrix<ET, OT> const& _mat)
     {
         os << '{';
         for (std::size_t i = 0; i < _mat.rows(); ++i)
@@ -54,10 +56,10 @@ namespace { // {{{ helper
     }
 } // }}}
 
-template <typename T, size_t N> using vec = math::fs_vector<T, N>;
+template <typename T, size_t N> using vec = LINEAR_ALGEBRA_NAMESPACE::fs_vector<T, N>;
 template <size_t N> using ivec = vec<int, N>;
 
-template <typename T, size_t R, size_t C> using mat = math::fs_matrix<T, R, C>;
+template <typename T, size_t R, size_t C> using mat = LINEAR_ALGEBRA_NAMESPACE::fs_matrix<T, R, C>;
 template <size_t R, size_t C> using imat = mat<int, R, C>;
 
 using namespace std;
@@ -88,7 +90,6 @@ TEST_CASE("vector.sub")
     REQUIRE(v3 == expected);
 }
 
-
 TEST_CASE("vector.mul")
 {
     SECTION("inner")
@@ -109,7 +110,7 @@ TEST_CASE("vector.mul")
     //     REQUIRE(v2 == expected);
     // }
 
-    // SECTION("scalar right ")
+    // SECTION("scalar right")
     // {
     //     auto static constexpr v1 = ivec<3>{5, 2, 3};
     //     auto static constexpr s1 = 4;
