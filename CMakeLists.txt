@@ -9,9 +9,9 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ${MASTER_PROJECT})
 
-option(LINEAR_ALGEBRA_TESTING "linear_algebra: enables building of unit tests [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
-option(LINEAR_ALGEBRA_EMBEDDED_FMTLIB "linear_algebra: uses embedded fmtlib [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
+option(LINEAR_ALGEBRA_TESTING "linear_algebra: enables building of unit tests (requires catch2) [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
 option(LINEAR_ALGEBRA_EMBEDDED_CATCH2 "linear_algebra: uses embedded catch2 for testing [default: ${MASTER_PROJECT}]" ${MASTER_PROJECT})
+option(LINEAR_ALGEBRA_EMBEDDED_FMTLIB "linear_algebra: uses embedded fmtlib [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
 
 # setting defaults
 if (NOT("${CMAKE_CXX_STANDARD}"))
@@ -51,6 +51,8 @@ else()
 endif()
 
 if(LINEAR_ALGEBRA_TESTING AND LINEAR_ALGEBRA_EMBEDDED_CATCH2)
+    set(CATCH_INSTALL_DOCS OFF CACHE BOOL "Catch2: Install documentation.")
+    set(CATCH_INSTALL_HELPERS OFF CACHE BOOL "Catch2: Install helpers.")
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/catch2")
 else()
     # master project must provide its own catch2
@@ -60,8 +62,27 @@ endif()
 # LIBRARY
 
 set(LINEAR_ALGEBRA_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/include/math/linear_algebra
-	${CMAKE_CURRENT_SOURCE_DIR}/include/math/linear_algebra.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/linear_algebra
+	${CMAKE_CURRENT_SOURCE_DIR}/include/linear_algebra.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/addition_traits.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/arithmetic_operators.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/base.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/column_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/convenience_aliases.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/ext.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_matrix_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_vector_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fwd.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/matrix.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/multiplication_traits.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/negation_traits.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/operation_traits.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/row_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/scalar_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/submatrix_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/subtraction_traits.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/transpose_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/vector.h
 )
 
 add_library(linear_algebra INTERFACE)
