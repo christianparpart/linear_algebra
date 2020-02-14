@@ -67,7 +67,6 @@ TEST_CASE("vector.neg")
     auto static constexpr v1 = ivec<3>{0, 1, 2};
     auto static const v2 = -v1;
     auto static const v3 = ivec<3>{0, -1, -2};
-
     REQUIRE(v2 == v3);
 }
 
@@ -94,7 +93,6 @@ TEST_CASE("matrix.neg")
     auto static constexpr m1 = imat<2, 2>{1,-2,3,-4};
     auto static constexpr m2 = -m1;
     auto static constexpr m3 = imat<2, 2>{-1,2,-3,4};
-
     REQUIRE(m2 == m3);
 }
 
@@ -104,11 +102,6 @@ TEST_CASE("matrix.add")
     auto static constexpr m2 = imat<2, 2>{2,3,4,5};
     auto static constexpr m3 = m1 + m2;
     auto static constexpr expected = imat<2, 2>{3,5,7,9};
-
-    cout << "   " << m1 << '\n'
-         << " + " << m2 << '\n'
-         << " = " << m3 << '\n';
-
     REQUIRE(m3 == expected);
 }
 
