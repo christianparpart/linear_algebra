@@ -100,7 +100,11 @@ if(LINEAR_ALGEBRA_TESTING)
     enable_testing()
     add_executable(test_linear_algebra
         test/test_main.cpp
-        test/linear_algebra_test.cpp
+        test/support.h
+        test/neg.cpp
+        test/add.cpp
+        test/sub.cpp
+        test/mul.cpp
     )
     target_link_libraries(test_linear_algebra linear_algebra fmt::fmt-header-only Catch2::Catch2)
     add_test(test_linear_algebra ./test_linear_algebra)
