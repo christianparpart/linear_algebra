@@ -18,23 +18,20 @@
 
 #include <catch2/catch.hpp>
 
-TEST_CASE("addition")
+TEST_CASE("addition: vector")
 {
-    SECTION("vector")
-    {
-        auto static const v1 = ivec<3>{0, 1, 2};
-        auto static const v2 = ivec<3>{3, 4, 5};
-        auto static const v3 = v1 + v2;
-        auto static const expected = ivec<3>{3, 5, 7};
-        REQUIRE(v3 == expected);
-    }
+    auto static const v1 = ivec<3>{0, 1, 2};
+    auto static const v2 = ivec<3>{3, 4, 5};
+    auto static const v3 = v1 + v2;
+    auto static const expected = ivec<3>{3, 5, 7};
+    REQUIRE(v3 == expected);
+}
 
-    SECTION("matrix")
-    {
-        auto static const m1 = imat<2, 2>{1, 2, 3, 4};
-        auto static const m2 = imat<2, 2>{2, 3, 4, 5};
-        auto static const m3 = m1 + m2;
-        auto static const expected = imat<2, 2>{3, 5, 7, 9};
-        REQUIRE(m3 == expected);
-    }
+TEST_CASE("addition: matrix")
+{
+    auto static const m1 = imat<2, 2>{1, 2, 3, 4};
+    auto static const m2 = imat<2, 2>{2, 3, 4, 5};
+    auto static const m3 = m1 + m2;
+    auto static const expected = imat<2, 2>{3, 5, 7, 9};
+    REQUIRE(m3 == expected);
 }

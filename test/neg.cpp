@@ -18,21 +18,18 @@
 
 #include <catch2/catch.hpp>
 
-TEST_CASE("negation")
+TEST_CASE("negation: vector")
 {
-    SECTION("vector")
-    {
-        auto static const v1 = ivec<3>{0, 1, 2};
-        auto static const v2 = -v1;
-        auto static const v3 = ivec<3>{0, -1, -2};
-        REQUIRE(v2 == v3);
-    }
+    auto static const v1 = ivec<3>{0, 1, 2};
+    auto static const v2 = -v1;
+    auto static const v3 = ivec<3>{0, -1, -2};
+    REQUIRE(v2 == v3);
+}
 
-    SECTION("matrix")
-    {
-        auto static const m1 = imat<2, 2>{1, -2, 3, -4};
-        auto static const m2 = -m1;
-        auto static const m3 = imat<2, 2>{-1, 2, -3, 4};
-        REQUIRE(m2 == m3);
-    }
+TEST_CASE("negation: matrix")
+{
+    auto static const m1 = imat<2, 2>{1, -2, 3, -4};
+    auto static const m2 = -m1;
+    auto static const m3 = imat<2, 2>{-1, 2, -3, 4};
+    REQUIRE(m2 == m3);
 }
