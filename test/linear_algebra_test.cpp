@@ -64,35 +64,70 @@ template <size_t R, size_t C> using imat = mat<int, R, C>;
 
 using namespace std;
 
-TEST_CASE("vector.neg")
+TEST_CASE("negation")
 {
-    auto static constexpr v1 = ivec<3>{0, 1, 2};
-    auto static const v2 = -v1;
-    auto static const v3 = ivec<3>{0, -1, -2};
-    REQUIRE(v2 == v3);
+    SECTION("vector")
+    {
+        auto static constexpr v1 = ivec<3>{0, 1, 2};
+        auto static const v2 = -v1;
+        auto static const v3 = ivec<3>{0, -1, -2};
+        REQUIRE(v2 == v3);
+    }
+
+    SECTION("matrix")
+    {
+        auto static constexpr m1 = imat<2, 2>{1, -2, 3, -4};
+        auto static constexpr m2 = -m1;
+        auto static constexpr m3 = imat<2, 2>{-1, 2, -3, 4};
+        REQUIRE(m2 == m3);
+    }
 }
 
-TEST_CASE("vector.add")
+TEST_CASE("addition")
 {
-    auto static constexpr v1 = ivec<3>{0, 1, 2};
-    auto static constexpr v2 = ivec<3>{3, 4, 5};
-    auto static constexpr v3 = v1 + v2;
-    auto static constexpr expected = ivec<3>{3,5,7};
-    REQUIRE(v3 == expected);
+    SECTION("vector")
+    {
+        auto static constexpr v1 = ivec<3>{0, 1, 2};
+        auto static constexpr v2 = ivec<3>{3, 4, 5};
+        auto static constexpr v3 = v1 + v2;
+        auto static constexpr expected = ivec<3>{3, 5, 7};
+        REQUIRE(v3 == expected);
+    }
+
+    SECTION("matrix")
+    {
+        auto static constexpr m1 = imat<2, 2>{1, 2, 3, 4};
+        auto static constexpr m2 = imat<2, 2>{2, 3, 4, 5};
+        auto static constexpr m3 = m1 + m2;
+        auto static constexpr expected = imat<2, 2>{3, 5, 7, 9};
+        REQUIRE(m3 == expected);
+    }
 }
 
-TEST_CASE("vector.sub")
+TEST_CASE("subtraction")
 {
-    auto static constexpr v1 = ivec<3>{5, 2, 1};
-    auto static constexpr v2 = ivec<3>{1, 2, 5};
-    auto static constexpr v3 = v1 - v2;
-    auto static constexpr expected = ivec<3>{4, 0, -4};
-    REQUIRE(v3 == expected);
+    SECTION("vector")
+    {
+        auto static constexpr v1 = ivec<3>{5, 2, 1};
+        auto static constexpr v2 = ivec<3>{1, 2, 5};
+        auto static constexpr v3 = v1 - v2;
+        auto static constexpr expected = ivec<3>{4, 0, -4};
+        REQUIRE(v3 == expected);
+    }
+
+    SECTION("matrix")
+    {
+        auto static constexpr m1 = imat<2, 2>{5, 2, 1, 0};
+        auto static constexpr m2 = imat<2, 2>{0, 2, 4, 8};
+        auto static constexpr m3 = m1 - m2;
+        auto static constexpr expected = imat<2, 2>{5, 0, -3, -8};
+        REQUIRE(m3 == expected);
+    }
 }
 
-TEST_CASE("vector.mul")
+TEST_CASE("multiplication")
 {
-    SECTION("inner")
+    SECTION("vector inner")
     {
         auto static constexpr v1 = ivec<3>{5, 2, 3};
         auto static constexpr v2 = ivec<3>{1, 2, 5};
@@ -101,47 +136,21 @@ TEST_CASE("vector.mul")
         REQUIRE(v3 == expected);
     }
 
-    // SECTION("scalar left")
-    // {
-    //     auto static constexpr v1 = ivec<3>{5, 2, 3};
-    //     auto static constexpr s1 = 4;
-    //     auto static constexpr v2 = s1 * v1;
-    //     auto static constexpr expected = ivec<3>{20, 8, 12};
-    //     REQUIRE(v2 == expected);
-    // }
+    SECTION("scalar * vector")
+    {
+        auto static constexpr v1 = ivec<3>{5, 2, 3};
+        auto static constexpr s1 = 4;
+        auto static constexpr v2 = s1 * v1;
+        auto static constexpr expected = ivec<3>{20, 8, 12};
+        REQUIRE(v2 == expected);
+    }
 
-    // SECTION("scalar right")
-    // {
-    //     auto static constexpr v1 = ivec<3>{5, 2, 3};
-    //     auto static constexpr s1 = 4;
-    //     auto static constexpr v2 = v1 * s1;
-    //     auto static constexpr expected = ivec<3>{20, 8, 12};
-    //     REQUIRE(v2 == expected);
-    // }
-}
-
-TEST_CASE("matrix.neg")
-{
-    auto static constexpr m1 = imat<2, 2>{1,-2,3,-4};
-    auto static constexpr m2 = -m1;
-    auto static constexpr m3 = imat<2, 2>{-1,2,-3,4};
-    REQUIRE(m2 == m3);
-}
-
-TEST_CASE("matrix.add")
-{
-    auto static constexpr m1 = imat<2, 2>{1,2,3,4};
-    auto static constexpr m2 = imat<2, 2>{2,3,4,5};
-    auto static constexpr m3 = m1 + m2;
-    auto static constexpr expected = imat<2, 2>{3,5,7,9};
-    REQUIRE(m3 == expected);
-}
-
-TEST_CASE("matrix.sub")
-{
-    auto static constexpr m1 = imat<2, 2>{5,2,1,0};
-    auto static constexpr m2 = imat<2, 2>{0,2,4,8};
-    auto static constexpr m3 = m1 - m2;
-    auto static constexpr expected = imat<2, 2>{5,0,-3,-8};
-    REQUIRE(m3 == expected);
+    SECTION("vector * scalar")
+    {
+        auto static constexpr v1 = ivec<3>{5, 2, 3};
+        auto static constexpr s1 = 4;
+        auto static constexpr v2 = v1 * s1;
+        auto static constexpr expected = ivec<3>{20, 8, 12};
+        REQUIRE(v2 == expected);
+    }
 }

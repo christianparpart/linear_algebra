@@ -7,7 +7,10 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 
 // 6.6.1 | matrix_operation_traits
 template <class T1, class T2>
-struct matrix_multiplication_element_traits { using element_type = decltype(std::declval<T1>() * std::declval<T2>()); };
+struct matrix_multiplication_element_traits
+{
+    using element_type = decltype(std::declval<T1>() * std::declval<T2>());
+};
 
 template <class OT, class T1, class T2>
 using matrix_multiplication_element_t = typename OT::template element_multiplication_traits<T1, T2>::element_type;
@@ -20,8 +23,27 @@ struct matrix_multiplication_engine_traits
     using engine_type = ET1; // TODO
 };
 
+template <class OT, class T1, class T2, std::size_t N>
+struct matrix_multiplication_engine_traits<OT, fs_vector_engine<T1, N>, fs_vector_engine<T2, N>>
+{
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_vector_engine<matrix_multiplication_element_t<OT, T1, T2>, N>;
+};
+
+template <class OT, class T1, class T2, std::size_t N2>
+struct matrix_multiplication_engine_traits<OT, scalar_engine<T1>, fs_vector_engine<T2, N2>>
+{
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_vector_engine<matrix_multiplication_element_t<OT, T1, T2>, N2>;
+};
+
 template <class OT, class ET1, class ET2>
-using matrix_multiplication_engine_t = typename OT::template element_multiplication_traits<ET1, ET2>;
+using matrix_multiplication_engine_t =
+    typename OT::template engine_multiplication_traits<
+        OT, // TODO: OTR
+        ET1,
+        ET2
+    >::engine_type;
 
 // 6.9.4 matrix_multiplication_traits<OT, OP1, OP2>
 template <class OT, class OP1, class OP2> struct matrix_multiplication_traits;

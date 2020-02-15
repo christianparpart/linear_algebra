@@ -9,6 +9,7 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 template <typename T>
 struct scalar_engine {
     using engine_category = scalar_engine_tag;
+
     using element_type = T;
     using value_type = std::remove_cv_t<T>;
     using pointer = TODO; //- See below
