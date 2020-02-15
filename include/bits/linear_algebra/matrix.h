@@ -63,19 +63,19 @@ class matrix {
 
     //- Capacity
     //
-    constexpr size_type columns() const noexcept { return engine_.rows(); }
-    constexpr size_type rows() const noexcept { return engine_.columns(); }
+    constexpr size_type rows() const noexcept { return engine_.rows(); }
+    constexpr size_type columns() const noexcept { return engine_.columns(); }
     constexpr size_tuple size() const noexcept { return engine_.size(); }
     constexpr size_type column_capacity() const noexcept { return engine_.column_capacity(); }
     constexpr size_type row_capacity() const noexcept { return engine_.row_capacity(); }
     constexpr size_tuple capacity() const noexcept { return engine_.capacity(); }
     constexpr void reserve(size_tuple cap) { engine_.reserve(cap); }
     constexpr void reserve(size_type rowcap, size_type colcap) { engine_.reserve(rowcap, colcap); }
-    constexpr void resize(size_tuple size)
+    constexpr void resize([[maybe_unused]] size_tuple size)
     {
-        static_assert(std::is_same_v<engine_type::engine_category, resizable_matrix_engine_tag>);
-        if constexpr (std::is_same_v<engine_type::engine_category, resizable_matrix_engine_tag>)
-            engine_.resize(std::get<0>(size), std::get<1>(size));
+        // static_assert(std::is_same_v<engine_type::engine_category, resizable_matrix_engine_tag>);
+        // if constexpr (std::is_same_v<engine_type::engine_category, resizable_matrix_engine_tag>)
+        //     engine_.resize(std::get<0>(size), std::get<1>(size));
     }
     constexpr void resize(size_type rows, size_type cols) { engine_.resize(rows, cols); }
     constexpr void resize(size_tuple size, size_tuple cap) { engine_.resize(size, cap); }

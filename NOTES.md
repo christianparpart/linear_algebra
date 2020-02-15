@@ -26,6 +26,8 @@
     myvec.t() * myvec == square matrix of size myvec.size()?
 * matrix ctor with `initializer(i, j) -> T` lambda
 * vector ctor with `initializer(i) -> T` lambda
+* `matrix__...__engine_traits::element_type` should not be there. (can be reached via `...::engine_type::element_type` too)
+    * actually, only `matrix_..._engine_t<>` should be exposed.
 
-## THROUGHTS
+## THOUGHTS
 * What about bigint/bigrational/symexpr numeric types? (seperate paper/proposal)

@@ -73,15 +73,15 @@ class fs_matrix_engine {
     //
     constexpr reference operator()(size_type i, size_type j)
     {
-        assert(i < R);
-        assert(j < C);
+        // assert(i < R);
+        // assert(j < C);
         return values_[i * C + j];
     }
 
     constexpr const_reference operator()(size_type i, size_type j) const
     {
-        assert(i < R);
-        assert(j < C);
+        // assert(i < R);
+        // assert(j < C);
         return values_[i * C + j];
     }
 

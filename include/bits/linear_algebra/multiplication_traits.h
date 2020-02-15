@@ -2,6 +2,7 @@
 
 #include "base.h"
 #include "fwd.h"
+#include <iostream>
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
@@ -18,10 +19,10 @@ using matrix_multiplication_element_t = typename OT::template element_multiplica
 // 6.8.4 | engine promotion traits | matrix_multiplication_engine_traits<OT, ET1, ET2>
 template <class OT, class ET1, class ET2>
 struct matrix_multiplication_engine_traits
-{
+/*{
     using element_type = matrix_multiplication_element_t<OT, typename ET1::element_type, typename ET2::element_type>;
     using engine_type = ET1; // TODO
-};
+}*/;
 
 template <class OT, class T1, class T2, std::size_t N>
 struct matrix_multiplication_engine_traits<OT, fs_vector_engine<T1, N>, fs_vector_engine<T2, N>>
@@ -35,6 +36,27 @@ struct matrix_multiplication_engine_traits<OT, scalar_engine<T1>, fs_vector_engi
 {
     using element_type = matrix_multiplication_element_t<OT, T1, T2>;
     using engine_type = fs_vector_engine<matrix_multiplication_element_t<OT, T1, T2>, N2>;
+};
+
+template <class OT, class T1, std::size_t N1, class T2>
+struct matrix_multiplication_engine_traits<OT, fs_vector_engine<T1, N1>, scalar_engine<T2>>
+{
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_vector_engine<matrix_multiplication_element_t<OT, T1, T2>, N1>;
+};
+
+template <class OT, class T1, class T2, std::size_t R2, std::size_t C2>
+struct matrix_multiplication_engine_traits<OT, scalar_engine<T1>, fs_matrix_engine<T2, R2, C2>>
+{
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_matrix_engine<matrix_multiplication_element_t<OT, T1, T2>, R2, C2>;
+};
+
+template <class OT, class T1, std::size_t R1, std::size_t C1, class T2>
+struct matrix_multiplication_engine_traits<OT, fs_matrix_engine<T1, R1, C1>, scalar_engine<T2>>
+{
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_matrix_engine<matrix_multiplication_element_t<OT, T1, T2>, R1, C1>;
 };
 
 template <class OT, class ET1, class ET2>
@@ -136,7 +158,7 @@ struct matrix_multiplication_traits<OT, vector<ET1, OT1>, vector<ET2, OT2>>
     }
 };
 
-// matrix*vector
+// matrix * vector
 template <class OT, class ET1, class OT1, class ET2, class OT2>
 struct matrix_multiplication_traits<OT, matrix<ET1, OT1>, vector<ET2, OT2>>
 {
