@@ -16,43 +16,6 @@
 #include <linear_algebra>
 #include <ostream>
 
-namespace { // {{{ helper
-    template <typename ET, typename OT>
-    std::ostream& operator<<(std::ostream& os, LINEAR_ALGEBRA_NAMESPACE::vector<ET, OT>const& _vec)
-    {
-        os << '(';
-        for (std::size_t i = 0; i < _vec.size(); ++i)
-        {
-            if (i != 0)
-                os << ", ";
-            os << _vec(i);
-        }
-        os << ')';
-        return os;
-    }
-
-    template <typename ET, typename OT>
-    std::ostream& operator<<(std::ostream& os, LINEAR_ALGEBRA_NAMESPACE::matrix<ET, OT> const& _mat)
-    {
-        os << '{';
-        for (std::size_t i = 0; i < _mat.rows(); ++i)
-        {
-            if (i != 0)
-                os << ", ";
-            os << '{';
-            for (std::size_t j = 0; j < _mat.columns(); ++j)
-            {
-                if (j != 0)
-                    os << ", ";
-                os << _mat(i, j);
-            }
-            os << '}';
-        }
-        os << '}';
-        return os;
-    }
-} // }}}
-
 template <typename T, size_t N> using vec = LINEAR_ALGEBRA_NAMESPACE::fs_vector<T, N>;
 template <size_t N> using ivec = vec<int, N>;
 
