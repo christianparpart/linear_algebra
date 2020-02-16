@@ -101,8 +101,9 @@ struct matrix_multiplication_traits<OT, vector<ET1, OT1>, T2>
         if constexpr (is_resizable_engine_v<engine_type>)
             r.resize(v1.size());
 
-        for (decltype(v1.size()) i = 0; i < v1.size(); ++i)
-            r(i) = v1(i) * s2;
+        using detail::times;
+        using detail::for_each;
+        for_each(times(v1.size()), [&](auto i) constexpr { r(i) = v1(i) * s2; });
 
         return r;
     }
@@ -123,8 +124,9 @@ struct matrix_multiplication_traits<OT, T1, vector<ET2, OT2>>
         if constexpr (is_resizable_engine_v<engine_type>)
             r.resize(v2.size());
 
-        for (decltype(v2.size()) i = 0; i < v2.size(); ++i)
-            r(i) = s1 * v2(i);
+        using detail::times;
+        using detail::for_each;
+        for_each(times(v2.size()), [&](auto i) constexpr { r(i) = s1 * v2(i); });
 
         return r;
     }
@@ -145,9 +147,9 @@ struct matrix_multiplication_traits<OT, matrix<ET1, OT1>, T2>
         if constexpr (is_resizable_engine_v<engine_type>)
             r.resize(m1.size());
 
-        for (decltype(m1.rows()) i = 0; i < m1.rows(); ++i)
-            for (decltype(m1.columns()) j = 0; j < m1.columns(); ++j)
-                r(i, j) = m1(i, j) * s2;
+        using detail::times;
+        for (auto [i, j] : times(r.rows()) * times(r.columns()))
+            r(i, j) = m1(i, j) * s2;
 
         return r;
     }
@@ -163,14 +165,15 @@ struct matrix_multiplication_traits<OT, T1, matrix<ET2, OT2>>
     using result_type = matrix<engine_type, op_traits>;
     constexpr static result_type multiply(T1 const& s1, matrix<ET2, OT2> const& m2)
     {
+        return matrix_multiplication_traits<OT, matrix<ET2, OT2>, T1>::multiply(m2, s1);
         result_type r;
 
         if constexpr (is_resizable_engine_v<engine_type>)
             r.resize(m2.size());
 
-        for (decltype(m2.rows()) i = 0; i < m2.rows(); ++i)
-            for (decltype(m2.columns()) j = 0; j < m2.columns(); ++j)
-                r(i, j) = s1 * m2(i, j);
+        using detail::times;
+        for (auto [i, j] : times(r.rows()) * times(r.columns()))
+            r(i, j) = s1 * m2(i, j);
 
         return r;
     }
@@ -187,12 +190,9 @@ struct matrix_multiplication_traits<OT, vector<ET1, OT1>, vector<ET2, OT2>>
     using result_type = matrix_multiplication_element_t<op_traits, elem_type_1, elem_type_2>;
     constexpr static result_type multiply(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2)
     {
-        result_type r{};
-
-        for (decltype(v1.size()) i = 0; i < v1.size(); ++i)
-            r += v1(i) * v2(i);
-
-        return r;
+        using detail::times;
+        using detail::reduce;
+        return reduce(times(v1.size()), result_type{}, [&](auto acc, auto i) constexpr { return acc + v1(i) * v2(i); });
     }
 };
 
@@ -213,16 +213,9 @@ struct matrix_multiplication_traits<OT, matrix<ET1, OT1>, vector<ET2, OT2>>
         if constexpr (is_resizable_engine_v<engine_type>)
             r.resize(m1.columns());
 
-        for (decltype(m1.rows()) i = 0; i < m1.rows(); ++i)
-        {
-            // typename engine_type::value_type bi{};
-            // for (decltype(m1.columns()) j = 0; j < m1.columns(); ++j)
-            //     bi += m1(i, j) * m2(j);
-            // r(i) = bi;
-            r(i) = reduce(times(m1.columns()), 0, [&](auto acc, auto j) {
-                return acc + m1(i, j) * m2(j);
-            });
-        }
+        for (auto i : times(m1.rows()))
+            r(i) = reduce(times(m1.columns()), 0, [&](auto acc, auto j) { return acc + m1(i, j) * m2(j); });
+
         return r;
     }
 };
@@ -263,16 +256,15 @@ struct matrix_multiplication_traits<OT, matrix<ET1, OT1>, matrix<ET2, OT2>>
         if constexpr (is_resizable_engine_v<engine_type>)
             r.resize(m1.rows(), m2.columns());
 
-        for (decltype(r.rows()) i = 0; i < r.rows(); ++i)
-        {
-            for (decltype(r.columns()) j = 0; j < r.columns(); ++j)
-            {
-                typename engine_type::value_type v{};
-                for (decltype(m1.columns()) k = 0; k < m1.columns(); ++k)
-                    v += m1(i, k) * m2(k, j);
-                r(i, j) = v;
-            }
-        }
+        using detail::times;
+        using detail::reduce;
+        using value_type = typename engine_type::value_type;
+
+        for (auto [i, j] : times(r.rows()) * times(r.columns()))
+            r(i, j) = reduce(times(m1.columns()), value_type{}, [&, i = i, j = j](auto acc, auto k) {
+                return acc + m1(i, k) * m2(k, j);
+            });
+
         return r;
     }
 };
