@@ -46,10 +46,19 @@ template <class ET> constexpr inline bool is_resizable_engine_v =
     std::is_same_v<typename ET::engine_category, resizable_matrix_engine_tag> ||
     std::is_same_v<typename ET::engine_category, resizable_vector_engine_tag>;
 
+template <class ET> constexpr inline bool is_fixed_size_engine_v = !is_resizable_engine_v<ET>;
+
 template <class ET> constexpr inline bool is_matrix_engine_v =
     std::is_same_v<typename ET::engine_category, readable_matrix_engine_tag> ||
     std::is_same_v<typename ET::engine_category, writable_matrix_engine_tag> ||
     std::is_same_v<typename ET::engine_category, resizable_matrix_engine_tag>;
+
+template <class ET> constexpr inline bool is_vector_engine_v =
+    std::is_same_v<typename ET::engine_category, readable_vector_engine_tag> ||
+    std::is_same_v<typename ET::engine_category, writable_vector_engine_tag> ||
+    std::is_same_v<typename ET::engine_category, resizable_vector_engine_tag>;
+
+template <typename ET> constexpr inline bool is_engine_v = is_matrix_engine_v<ET> || is_vector_engine_v<ET>;
 
 template <class VCT> constexpr inline bool is_vector_engine_tag =
     std::is_same_v<VCT, readable_vector_engine_tag> ||

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "base.h"
+#include "concepts.h"
 #include "column_engine.h"
 #include "row_engine.h"
 #include "submatrix_engine.h"
@@ -16,6 +17,8 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 // 6.5.2 | class matrix<ET, OT>
 template <class ET, class OT>
 class matrix {
+    static_assert(is_engine_v<ET>, "ET must obey the rules of an engine type.");
+
   private:
     ET engine_{};
 
@@ -52,10 +55,18 @@ class matrix {
 
     template <class ET2, class OT2>
     constexpr matrix(matrix<ET2, OT2> const& src) : engine_{src.engine_} {}
-    constexpr matrix(size_tuple size) { resize(size); }
-    constexpr matrix(size_type rows, size_type cols);
-    constexpr matrix(size_tuple size, size_tuple cap);
-    constexpr matrix(size_type rows, size_type cols, size_type rowcap, size_type colcap);
+
+    constexpr matrix(size_tuple size) LA_CONCEPT(is_resizable_engine_v<engine_type>) { resize(size); }
+    constexpr matrix(size_type rows, size_type cols) LA_CONCEPT(is_resizable_engine_v<engine_type>) { resize(rows, cols); }
+
+    constexpr matrix(size_tuple size, size_tuple cap) LA_CONCEPT(is_resizable_engine_v<engine_type>)
+    {
+        reserve(cap);
+        resize(size);
+    }
+
+    constexpr matrix(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable_engine_v<engine_type>);
+
     constexpr matrix& operator=(matrix&&) noexcept = default;
     constexpr matrix& operator=(matrix const&) = default;
     template <class ET2, class OT2>
@@ -69,20 +80,13 @@ class matrix {
     constexpr size_type column_capacity() const noexcept { return engine_.column_capacity(); }
     constexpr size_type row_capacity() const noexcept { return engine_.row_capacity(); }
     constexpr size_tuple capacity() const noexcept { return engine_.capacity(); }
-    constexpr void reserve(size_tuple cap) { engine_.reserve(cap); }
-    constexpr void reserve(size_type rowcap, size_type colcap) { engine_.reserve(rowcap, colcap); }
-    constexpr void resize([[maybe_unused]] size_tuple size)
-    {
-        // static_assert(std::is_same_v<engine_type::engine_category, resizable_matrix_engine_tag>);
-        // if constexpr (std::is_same_v<engine_type::engine_category, resizable_matrix_engine_tag>)
-        //     engine_.resize(std::get<0>(size), std::get<1>(size));
-    }
-    constexpr void resize(size_type rows, size_type cols) { engine_.resize(rows, cols); }
-    constexpr void resize(size_tuple size, size_tuple cap) { engine_.resize(size, cap); }
-    constexpr void resize(size_type rows, size_type cols, size_type rowcap, size_type colcap)
-    {
-        engine_.resize(rows, cols, rowcap, colcap);
-    }
+
+    constexpr void reserve(size_tuple cap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.reserve(cap); }
+    constexpr void reserve(size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.reserve(rowcap, colcap); }
+    constexpr void resize(size_tuple size) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(std::get<0>(size), std::get<1>(size)); }
+    constexpr void resize(size_type rows, size_type cols) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(rows, cols); }
+    constexpr void resize(size_tuple size, size_tuple cap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(size, cap); }
+    constexpr void resize(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(rows, cols, rowcap, colcap); }
 
     //- Element access
     //
@@ -115,8 +119,8 @@ class matrix {
     //- Modifiers
     //
     constexpr void swap(matrix& rhs) noexcept { engine_.swap(rhs.engine_); }
-    constexpr void swap_columns(size_type i, size_type j) noexcept { engine_.swap_columns(i, j); }
-    constexpr void swap_rows(size_type i, size_type j) noexcept { engine_.swap_rows(i, j); }
+    constexpr void swap_columns(size_type i, size_type j) noexcept LA_CONCEPT(!is_readonly_engine_v<engine_type>) { engine_.swap_columns(i, j); }
+    constexpr void swap_rows(size_type i, size_type j) noexcept LA_CONCEPT(!is_readonly_engine_v<engine_type>) { engine_.swap_rows(i, j); }
 };
 
 } // end namespace

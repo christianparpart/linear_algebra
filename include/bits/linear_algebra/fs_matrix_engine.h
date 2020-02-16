@@ -15,6 +15,9 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 // 6.4.4 | class fs_matrix_engine<T, R, C>
 template <class T, size_t R, size_t C>
 class fs_matrix_engine {
+    static_assert(R >= 1 && C >= 1, "Row and column count must be at least one.");
+    static_assert(is_matrix_element_v<T>, "Element type must be an arithmetic field type.");
+
   private:
     std::array<T, R * C> values_{};
 

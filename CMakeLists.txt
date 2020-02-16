@@ -15,7 +15,7 @@ option(LINEAR_ALGEBRA_EMBEDDED_FMTLIB "linear_algebra: uses embedded fmtlib [def
 
 # setting defaults
 if (NOT("${CMAKE_CXX_STANDARD}"))
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 20)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -68,6 +68,7 @@ set(LINEAR_ALGEBRA_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/arithmetic_operators.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/base.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/column_engine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/concepts.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/convenience_aliases.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/defs.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/ext.h
