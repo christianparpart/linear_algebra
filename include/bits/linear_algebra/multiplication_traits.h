@@ -229,15 +229,23 @@ struct matrix_multiplication_traits<OT, vector<ET1, OT1>, matrix<ET2, OT2>>
     using result_type = vector<engine_type, op_traits>;
     constexpr static result_type multiply(vector<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2)
     {
-        // assert(m1.size() == m2.rows());
-        result_type r(m2.columns());
-        for (decltype(m2.columns()) j = 0; j < m2.columns(); ++j)
-        {
-            typename engine_type::value_type bi{};
-            for (decltype(m2.rows()) i = 0; i < m2.rows(); ++i)
-                bi += m1(i) * m2(i, j);
-            r(j) = bi;
-        }
+        if constexpr (is_fixed_size_engine_v<engine_type>)
+            static_assert(m1.size() == m2.rows(),
+                          "Left-hand-side vector element count must match right-hand-side matrix row count.");
+
+        result_type r;
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            r.resize(m2.columns());
+
+        using detail::times;
+        using detail::reduce;
+
+        for (auto j : times(m2.columns()))
+            r(j) = detail::reduce(detail::times(m2.rows(), 0, [&, j=j](auto acc, auto i) {
+                return acc + m1(i) * m2(i, j);
+            }));
+
         return r;
     }
 };
