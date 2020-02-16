@@ -38,8 +38,8 @@ class matrix {
     using const_submatrix_type = matrix<submatrix_engine<ET, readable_matrix_engine_tag>, OT>;
     using transpose_type = matrix<transpose_engine<ET, TODO /*see below*/ >, OT>;
     using const_transpose_type = matrix<transpose_engine<ET, readable_matrix_engine_tag>, OT>;
-    using hermitian_type = std::conditional_t<util::is_complex_v<element_type>, matrix, transpose_type>;
-    using const_hermitian_type = std::conditional_t<util::is_complex_v<element_type>, matrix, const_transpose_type>;
+    using hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, matrix, transpose_type>;
+    using const_hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, matrix, const_transpose_type>;
 
     //- Construct/copy/destroy
     //

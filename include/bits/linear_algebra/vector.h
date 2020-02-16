@@ -28,8 +28,8 @@ class vector {
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     using transpose_type = vector&;
     using const_transpose_type = vector const&;
-    using hermitian_type = std::conditional_t<util::is_complex_v<element_type>, vector, transpose_type>;
-    using const_hermitian_type = std::conditional_t<util::is_complex_v<element_type>, vector, const_transpose_type>;
+    using hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, vector, transpose_type>;
+    using const_hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, vector, const_transpose_type>;
 
     //- Construct/copy/destroy
     //

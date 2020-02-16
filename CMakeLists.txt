@@ -69,6 +69,7 @@ set(LINEAR_ALGEBRA_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/base.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/column_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/convenience_aliases.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/defs.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/ext.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_matrix_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_vector_engine.h
@@ -81,6 +82,7 @@ set(LINEAR_ALGEBRA_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/scalar_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/submatrix_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/subtraction_traits.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/support.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/transpose_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/vector.h
 )

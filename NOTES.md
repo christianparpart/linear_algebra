@@ -26,8 +26,10 @@
     myvec.t() * myvec == square matrix of size myvec.size()?
 * matrix ctor with `initializer(i, j) -> T` lambda
 * vector ctor with `initializer(i) -> T` lambda
-* `matrix__...__engine_traits::element_type` should not be there. (can be reached via `...::engine_type::element_type` too)
+* `matrix__...__engine_traits::element_type` should not be there. (can be reached via `...::engine_type::element_type`)
     * actually, only `matrix_..._engine_t<>` should be exposed.
+* From a Math point of view, you name a matrix like M_{m,n}(F) so it would be natural
+  to say `matrix<M, N, F>` instead of `matrix<F, M, N>`. Why the other way around?
 
 ## THOUGHTS
 * What about bigint/bigrational/symexpr numeric types? (seperate paper/proposal)
