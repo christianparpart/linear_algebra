@@ -63,6 +63,15 @@ TEST_CASE("multiplication: matrix * scalar")
     REQUIRE(m2 == expected);
 }
 
+TEST_CASE("multiplication: matrix * vector")
+{
+    auto static constexpr m = imat<2, 3>{1, 2, 3,
+                                         4, 5, 6};
+    auto static constexpr v = ivec<3>{3, 1, 2};
+    auto static constexpr b = m * v;
+    auto static constexpr expected = ivec<2>{11, 29};
+    REQUIRE(b == expected);
+}
+
 // TODO: matrix * matrix
-// TODO: matrix * vector
 // TODO: vector * matrix (where left hand side is treated as transposed vector, i.e. 1-row matrix)

@@ -59,6 +59,14 @@ struct matrix_multiplication_engine_traits<OT, fs_matrix_engine<T1, R1, C1>, sca
     using engine_type = fs_matrix_engine<matrix_multiplication_element_t<OT, T1, T2>, R1, C1>;
 };
 
+template <class OT, class T1, std::size_t R1, std::size_t C1, class T2, std::size_t N2>
+struct matrix_multiplication_engine_traits<OT, fs_matrix_engine<T1, R1, C1>, fs_vector_engine<T2, N2>>
+{
+    static_assert(C1 == N2, "Matrix-vector multiplication: matrix column count must equal vector element count.");
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_vector_engine<matrix_multiplication_element_t<OT, T1, T2>, N2>;
+};
+
 template <class OT, class ET1, class ET2>
 using matrix_multiplication_engine_t =
     typename OT::template engine_multiplication_traits<
@@ -167,7 +175,8 @@ struct matrix_multiplication_traits<OT, matrix<ET1, OT1>, vector<ET2, OT2>>
     using result_type = vector<engine_type, op_traits>;
     constexpr static result_type multiply(matrix<ET1, OT1> const& m1, vector<ET2, OT2> const& m2)
     {
-        result_type r(m1.columns());
+        result_type r;
+        // TODO: m1.resize(m1.columns());
         for (decltype(m1.rows()) i = 0; i < m1.rows(); ++i)
         {
             typename engine_type::value_type bi{};
