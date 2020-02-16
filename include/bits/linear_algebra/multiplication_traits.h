@@ -67,6 +67,14 @@ struct matrix_multiplication_engine_traits<OT, fs_matrix_engine<T1, R1, C1>, fs_
     using engine_type = fs_vector_engine<matrix_multiplication_element_t<OT, T1, T2>, N2>;
 };
 
+template <class OT, class T1, std::size_t R1, std::size_t C1, class T2, std::size_t R2, std::size_t C2>
+struct matrix_multiplication_engine_traits<OT, fs_matrix_engine<T1, R1, C1>, fs_matrix_engine<T2, R2, C2>>
+{
+    static_assert(C1 == R2, "Matrix-matrix multiplication: left matrix column count must equal right matrix row count.");
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_matrix_engine<matrix_multiplication_element_t<OT, T1, T2>, R1, C2>;
+};
+
 template <class OT, class ET1, class ET2>
 using matrix_multiplication_engine_t =
     typename OT::template engine_multiplication_traits<
@@ -219,7 +227,8 @@ struct matrix_multiplication_traits<OT, matrix<ET1, OT1>, matrix<ET2, OT2>>
     using result_type = matrix<engine_type, op_traits>;
     constexpr static result_type multiply(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2)
     {
-        result_type r(m1.rows(), m2.columns());
+        result_type r;
+        //TODO r.resize(m1.rows(), m2.columns());
         for (decltype(r.rows()) i = 0; i < r.rows(); ++i)
         {
             for (decltype(r.columns()) j = 0; j < r.columns(); ++j)

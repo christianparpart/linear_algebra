@@ -73,5 +73,17 @@ TEST_CASE("multiplication: matrix * vector")
     REQUIRE(b == expected);
 }
 
-// TODO: matrix * matrix
+TEST_CASE("multiplication: matrix * matrix")
+{
+    auto static constexpr m1 = imat<2, 3>{1, 2, 3,
+                                          2, 3, 4};
+    auto static constexpr m2 = imat<3, 4>{1, 2, 3, 4,
+                                          2, 3, 4, 5,
+                                          3, 4, 5, 6};
+    auto static constexpr m3 = m1 * m2;
+    auto static constexpr me = imat<2, 4>{14, 20, 26, 32,
+                                          20, 29, 38, 47};
+    REQUIRE(m3 == me);
+}
+
 // TODO: vector * matrix (where left hand side is treated as transposed vector, i.e. 1-row matrix)
