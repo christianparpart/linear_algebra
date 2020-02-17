@@ -30,6 +30,7 @@
     * actually, only `matrix_..._engine_t<>` should be exposed.
 * From a Math point of view, you name a matrix like M_{m,n}(F) so it would be natural
   to say `matrix<M, N, F>` instead of `matrix<F, M, N>`. Why the other way around?
+* Why no expression templates?
 
 ## THOUGHTS
 * What about bigint/bigrational/symexpr numeric types? (seperate paper/proposal)

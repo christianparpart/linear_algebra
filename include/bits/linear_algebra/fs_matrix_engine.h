@@ -1,3 +1,17 @@
+/**
+ * This file is part of the "dim" project
+ *   Copyright (c) 2020 Christian Parpart <christian@parpart.family>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #pragma once
 
 #include "base.h"
@@ -56,9 +70,12 @@ class fs_matrix_engine {
     template <class ET2>
     constexpr fs_matrix_engine& operator=(ET2 const& rhs)
     {
-        for (size_type i = 0; i < rhs.rows(); ++i)
-            for (size_type j = 0; j < rhs.columns(); ++j)
-                (*this)(i, j) = rhs(i, j);
+        if constexpr (is_fixed_size_engine_v<ET2>)
+            static_assert(rows() == rhs.rows() && columns() == rhs.columns(), "Matrix dimensions must match.");
+
+        using detail::times;
+        for (auto [i, j] : times(rhs.rows()) * times(rhs.columns()))
+            (*this)(i, j) = rhs(i, j);
 
         return *this;
     }

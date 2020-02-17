@@ -1,3 +1,17 @@
+/**
+ * This file is part of the "dim" project
+ *   Copyright (c) 2020 Christian Parpart <christian@parpart.family>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #pragma once
 
 #include "base.h"
@@ -14,10 +28,34 @@
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
+// transform's category tag from matrix to column
+template<typename T, typename From, typename To> struct transform_type {
+    using type = std::conditional_t<
+        std::is_same_v<T, From>,
+        To,
+        From
+        >;
+};
+template<typename VCT> struct tc { using type = VCT; };
+template<> struct tc<readable_matrix_engine_tag>  { using type = readable_vector_engine_tag; };
+template<> struct tc<writable_matrix_engine_tag>  { using type = writable_vector_engine_tag; };
+template<> struct tc<resizable_matrix_engine_tag> { using type = writable_vector_engine_tag; };
+
+
 // 6.5.2 | class matrix<ET, OT>
 template <class ET, class OT>
 class matrix {
-    static_assert(is_engine_v<ET>, "ET must obey the rules of an engine type.");
+    static_assert(is_matrix_engine_v<ET>, "ET must obey the rules of a matrix engine type.");
+
+    constexpr static bool inline is_resizable = is_resizable_engine_v<ET>;
+
+    using engine_category = typename ET::engine_category;
+    using equiv_vector_engine_tag = std::conditional_t<
+            std::is_same_v<engine_category, readable_matrix_engine_tag>, readable_vector_engine_tag,
+                                                                         writable_vector_engine_tag>;
+    using as_writable_matrix_engine_tag = std::conditional_t<
+            std::is_same_v<engine_category, readable_matrix_engine_tag>, readable_matrix_engine_tag,
+                                                                         writable_matrix_engine_tag>;
 
   private:
     ET engine_{};
@@ -33,13 +71,13 @@ class matrix {
     using difference_type = typename engine_type::difference_type;
     using size_type = typename engine_type::size_type;
     using size_tuple = typename engine_type::size_tuple;
-    using column_type = vector<column_engine<ET, TODO /*see below*/ >, OT>;
+    using column_type = vector<column_engine<ET, equiv_vector_engine_tag>, OT>;
     using const_column_type = vector<column_engine<ET, readable_vector_engine_tag>, OT>;
-    using row_type = vector<row_engine<ET, TODO /*see below*/ >, OT>;
+    using row_type = vector<row_engine<ET, equiv_vector_engine_tag>, OT>;
     using const_row_type = vector<row_engine<ET, readable_vector_engine_tag>, OT>;
-    using submatrix_type = matrix<submatrix_engine<ET, TODO /*see below*/ >, OT>;
+    using submatrix_type = matrix<submatrix_engine<ET, as_writable_matrix_engine_tag>, OT>;
     using const_submatrix_type = matrix<submatrix_engine<ET, readable_matrix_engine_tag>, OT>;
-    using transpose_type = matrix<transpose_engine<ET, TODO /*see below*/ >, OT>;
+    using transpose_type = matrix<transpose_engine<ET, as_writable_matrix_engine_tag>, OT>;
     using const_transpose_type = matrix<transpose_engine<ET, readable_matrix_engine_tag>, OT>;
     using hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, matrix, transpose_type>;
     using const_hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, matrix, const_transpose_type>;
@@ -56,21 +94,33 @@ class matrix {
     template <class ET2, class OT2>
     constexpr matrix(matrix<ET2, OT2> const& src) : engine_{src.engine_} {}
 
-    constexpr matrix(size_tuple size) LA_CONCEPT(is_resizable_engine_v<engine_type>) { resize(size); }
-    constexpr matrix(size_type rows, size_type cols) LA_CONCEPT(is_resizable_engine_v<engine_type>) { resize(rows, cols); }
+    constexpr matrix(size_tuple size) LA_CONCEPT(is_resizable) { resize(size); }
+    constexpr matrix(size_type rows, size_type cols) LA_CONCEPT(is_resizable) { resize(rows, cols); }
 
-    constexpr matrix(size_tuple size, size_tuple cap) LA_CONCEPT(is_resizable_engine_v<engine_type>)
+    constexpr matrix(size_tuple size, size_tuple cap) LA_CONCEPT(is_resizable)
     {
         reserve(cap);
         resize(size);
     }
 
-    constexpr matrix(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable_engine_v<engine_type>);
+    constexpr matrix(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable);
 
     constexpr matrix& operator=(matrix&&) noexcept = default;
     constexpr matrix& operator=(matrix const&) = default;
+
     template <class ET2, class OT2>
-    constexpr matrix& operator=(matrix<ET2, OT2> const& rhs);
+    constexpr matrix& operator=(matrix<ET2, OT2> const& rhs)
+    {
+        if constexpr (is_fixed_size_engine_v<engine_type>)
+            static_assert(rows() == rhs.rows() && columns() == rhs.columns(), "Matrix dimensions must match.");
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            resize(rhs.size());
+
+        using detail::times;
+        for (auto [i, j] : times(rows()) * times(columns()))
+            (*this)(i, j) = rhs(i, j);
+    }
 
     //- Capacity
     //
@@ -81,12 +131,12 @@ class matrix {
     constexpr size_type row_capacity() const noexcept { return engine_.row_capacity(); }
     constexpr size_tuple capacity() const noexcept { return engine_.capacity(); }
 
-    constexpr void reserve(size_tuple cap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.reserve(cap); }
-    constexpr void reserve(size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.reserve(rowcap, colcap); }
-    constexpr void resize(size_tuple size) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(std::get<0>(size), std::get<1>(size)); }
-    constexpr void resize(size_type rows, size_type cols) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(rows, cols); }
-    constexpr void resize(size_tuple size, size_tuple cap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(size, cap); }
-    constexpr void resize(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable_engine_v<engine_type>) { engine_.resize(rows, cols, rowcap, colcap); }
+    constexpr void reserve(size_tuple cap) LA_CONCEPT(is_resizable) { engine_.reserve(cap); }
+    constexpr void reserve(size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable) { engine_.reserve(rowcap, colcap); }
+    constexpr void resize(size_tuple size) LA_CONCEPT(is_resizable) { engine_.resize(std::get<0>(size), std::get<1>(size)); }
+    constexpr void resize(size_type rows, size_type cols) LA_CONCEPT(is_resizable) { engine_.resize(rows, cols); }
+    constexpr void resize(size_tuple size, size_tuple cap) LA_CONCEPT(is_resizable) { engine_.resize(size, cap); }
+    constexpr void resize(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable) { engine_.resize(rows, cols, rowcap, colcap); }
 
     //- Element access
     //
@@ -95,8 +145,10 @@ class matrix {
 
     //- Columns, rows, submatrices, transposes, and the Hermitian
     //
-    constexpr column_type column(size_type j) noexcept { return engine_.column(j); }
-    constexpr const_column_type column(size_type j) const noexcept { return engine_.column(j); }
+    constexpr column_type column(size_type j) noexcept {
+        return column_type(typename column_type::engine_type(engine_, j)); }
+    constexpr const_column_type column(size_type j) const noexcept {
+        return const_column_type(typename const_column_type::engine_type(const_cast<ET&>(engine_), j)); }
     constexpr row_type row(size_type i) noexcept { return engine_.row(i); }
     constexpr const_row_type row(size_type i) const noexcept { return engine_.row(i); }
     constexpr submatrix_type submatrix(size_type ri, size_type rn, size_type ci, size_type cn) noexcept {

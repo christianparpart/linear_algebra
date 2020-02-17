@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #pragma once
 
 #include <version>
@@ -20,7 +21,7 @@
 #define LA_CONCEPTS 1
 #define LA_CONCEPT(X) requires(X)
 #else
-#define LA_CONCEPT /*!*/
+#define LA_CONCEPT(X) /*!*/
 #endif
 
 namespace dim {

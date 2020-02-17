@@ -1,3 +1,17 @@
+/**
+ * This file is part of the "dim" project
+ *   Copyright (c) 2020 Christian Parpart <christian@parpart.family>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #pragma once
 
 #include "base.h"
@@ -38,7 +52,11 @@ class vector {
     constexpr vector(vector&&) noexcept = default;
     constexpr vector(vector const&) = default;
     template <class ET2, class OT2>
-    constexpr vector(vector<ET2, OT2> const& src) : engine_{src.engine_} {}
+    constexpr vector(vector<ET2, OT2> const& src) //: engine_(src.engine()) {}
+    {
+        for (auto i : detail::times(src.size()))
+            engine_(i) = src(i);
+    }
     template <class U>
     constexpr vector(std::initializer_list<U> list)
     {
@@ -48,6 +66,7 @@ class vector {
     }
     constexpr vector(size_type elems) { resize(elems); }
     constexpr vector(size_type elems, size_type elemcap) { resize(elems, elemcap); }
+    constexpr explicit vector(ET&& _engine) : engine_{std::forward<ET>(_engine)} {} // EXT
     constexpr vector& operator=(vector&&) noexcept = default;
     constexpr vector& operator=(vector const&) = default;
     template <class ET2, class OT2>
@@ -132,8 +151,8 @@ class vector {
 
     //- Data access
     //
-    constexpr engine_type& engine() noexcept;
-    constexpr engine_type const& engine() const noexcept;
+    constexpr engine_type& engine() noexcept { return engine_; }
+    constexpr engine_type const& engine() const noexcept { return engine_; }
 
     //- Modifiers
     //

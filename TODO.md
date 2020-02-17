@@ -22,6 +22,7 @@
 * [ ] `vector(Initializer init)` for lambda initializer (i) -> T
 * [ ] `one<T>`, `zero<T>` and some kind of `numeric_traits<T>`
 * [ ] `trace(A)`
+* [ ] `identity()`
 * [ ] `cofactor(i, j, A)`
 * [ ] `adjugate(A)`
 * [ ] `det(A)`, with optimizations for 1x1, 2x2, 3x3 (fs & dr), Laplace for N >= 4
