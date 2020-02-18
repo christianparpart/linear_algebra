@@ -11,17 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma once
 
-#include <linear_algebra>
 #include <ostream>
+#include <linear_algebra>
+#include "support.h"
 
-template <typename T> using dvec = LINEAR_ALGEBRA_NAMESPACE::dr_vector<T>;
-template <typename T> using dmat = LINEAR_ALGEBRA_NAMESPACE::dr_matrix<T>;
+#include <catch2/catch.hpp>
 
-template <typename T, size_t N> using vec = LINEAR_ALGEBRA_NAMESPACE::fs_vector<T, N>;
-template <size_t N> using ivec = vec<int, N>;
+TEST_CASE("dr_vector.ctor")
+{
+    SECTION("default")
+    {
+        auto static const me = dvec<int>();
+        CHECK(me.elements() == 0);
+    }
 
-template <typename T, size_t R, size_t C> using mat = LINEAR_ALGEBRA_NAMESPACE::fs_matrix<T, R, C>;
-template <size_t R, size_t C> using imat = mat<int, R, C>;
+    SECTION("initializer_list")
+    {
+        auto static const me = dvec<int>{0, 1, 2};
+        auto static const m2 = me;
+        REQUIRE(me == m2);
+    }
+}
+
 

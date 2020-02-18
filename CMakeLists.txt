@@ -104,6 +104,8 @@ if(LINEAR_ALGEBRA_TESTING)
     enable_testing()
     add_executable(test_linear_algebra
         test/test_main.cpp
+        test/dr_vector.cpp
+        test/dr_matrix.cpp
         test/support.h
         test/neg.cpp
         test/add.cpp

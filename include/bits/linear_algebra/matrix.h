@@ -78,7 +78,14 @@ class matrix {
     constexpr matrix(std::initializer_list<U> list) : engine_(list) {}
 
     template <class ET2, class OT2>
-    constexpr matrix(matrix<ET2, OT2> const& src) : engine_{src.engine_} {}
+    constexpr matrix(matrix<ET2, OT2> const& src)
+    {
+        using detail::times;
+        engine_.reserve(src.row_capacity(), src.column_capacity());
+        engine_.resize(src.rows(), src.columns());
+        for (auto [i, j] : times(rows()) * times(columns()))
+            (*this)(i, j) = src(i, j);
+    }
 
     constexpr matrix(size_tuple size) LA_CONCEPT(is_resizable) { resize(size); }
     constexpr matrix(size_type rows, size_type cols) LA_CONCEPT(is_resizable) { resize(rows, cols); }

@@ -20,8 +20,10 @@
 #include "bits/linear_algebra/operation_traits.h"
 
 // owning engines
-#include "bits/linear_algebra/fs_matrix_engine.h"
 #include "bits/linear_algebra/fs_vector_engine.h"
+#include "bits/linear_algebra/fs_matrix_engine.h"
+#include "bits/linear_algebra/dr_vector_engine.h"
+#include "bits/linear_algebra/dr_matrix_engine.h"
 
 // non-owning engines
 #include "bits/linear_algebra/scalar_engine.h"

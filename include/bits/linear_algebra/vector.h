@@ -58,12 +58,7 @@ class vector {
             engine_(i) = src(i);
     }
     template <class U>
-    constexpr vector(std::initializer_list<U> list)
-    {
-        std::size_t i = 0;
-        for (auto && v : list)
-            engine_(i++) = v;
-    }
+    constexpr vector(std::initializer_list<U> list) : engine_(list) {}
     constexpr vector(size_type elems) { resize(elems); }
     constexpr vector(size_type elems, size_type elemcap) { resize(elems, elemcap); }
     constexpr explicit vector(ET&& _engine) : engine_{std::forward<ET>(_engine)} {} // EXT
