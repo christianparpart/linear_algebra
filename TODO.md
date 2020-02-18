@@ -16,16 +16,18 @@
 ## EXTS
 
 * [ ] elementary matrix construction
-* [ ] matrix construction by lambda
 * [ ] `sparse_matrix_engine<OT>`
-* [ ] `matrix(Initializer init)` for lambda initializer (i, j) -> T
+* [x] `matrix(Initializer init)` for lambda initializer (i, j) -> T
 * [ ] `vector(Initializer init)` for lambda initializer (i) -> T
 * [ ] `one<T>`, `zero<T>` and some kind of `numeric_traits<T>`
 * [ ] `trace(A)`
 * [ ] `identity()`
-* [ ] `cofactor(i, j, A)`
+* [ ] `cofactor(A, i, j)`
 * [ ] `adjugate(A)`
-* [ ] `det(A)`, with optimizations for 1x1, 2x2, 3x3 (fs & dr), Laplace for N >= 4
+* [x] `det(A)`, fixed-size matrix, with optimizations for 1x1, 2x2, 3x3
+* [ ] `det(A)`, dynamic-size matrix, with optimizations for 1x1, 2x2, 3x3
+* [ ] `det(A)`, Laplace for N >= 4
+* [ ] `det(A)`, Leibnitz algorithm
 * [ ] `inverse(A)`
 * [ ] `solve(A)`
 * [ ] `solve_traced(A)`
