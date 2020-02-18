@@ -98,11 +98,18 @@ TEST_CASE("matrix.submatrix")
                                             10, 11, 12, 13, 14,
                                             20, 21, 22, 23, 24,
                                             30, 31, 32, 33, 34};
-    SECTION("1x1") {
+    SECTION("single") {
         auto static const m1 = base.submatrix(2, 3);
         auto static const me = imat<3, 4>{ 0,  1,  2,  4,
                                           10, 11, 12, 14,
                                           30, 31, 32, 34};
+        REQUIRE(m1 == me);
+    }
+
+    SECTION("multiple") {
+        auto static const m1 = base.submatrix(1, 2, 1, 3);
+        auto static const me = imat<2, 2>{ 0,  4,
+                                          30, 34};
         REQUIRE(m1 == me);
     }
 }
