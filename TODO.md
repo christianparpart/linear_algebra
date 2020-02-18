@@ -8,7 +8,7 @@
 
 ## PROPOSAL
 
-* [ ] `dr_vector_engine`
+* [x] `dr_vector_engine`
 * [ ] `dr_matrix_engine`
 * [ ] ensure proper engine promotion (fs op dr -> dr; dr op fs -> dr)
 * [ ] ensure proper trait promotion (std op custom -> custom, and vice versa)
