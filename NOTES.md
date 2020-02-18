@@ -7,6 +7,7 @@
 * `matrix_operation_traits::negation_traits<OTR, OP1>`
 
 ## Feedback
+- tags: readable/writable/resizable are definitely confusing to what they actually mean
 * Why `template <class>` over `template <typename>` when it is clear that it is a type?
 * What about the "See below"'s?
 * No words on `scalar_engine` except that it's a dummy scalar engine? ;-()

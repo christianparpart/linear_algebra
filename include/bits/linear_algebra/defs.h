@@ -15,3 +15,4 @@
 #pragma once
 
 #define LINEAR_ALGEBRA_NAMESPACE math
+#define LA_EXT 1

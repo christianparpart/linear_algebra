@@ -21,6 +21,9 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 // 6.4.5 | class column_engine<ET, VCT>
 template <class ET, class VCT>
 class column_engine {
+    static_assert(is_matrix_engine_v<ET>);
+    static_assert(is_vector_engine_tag<VCT>);
+
   private:
     template <typename ET2>
     struct _Iterator {
@@ -51,7 +54,7 @@ class column_engine {
     using size_type = typename ET::size_type;
 
     using iterator = _Iterator<ET>; // Implementation-defined
-    using const_iterator = _Iterator<ET const>; //- Implementation-defined
+    using const_iterator = _Iterator<std::add_const_t<ET>>; //- Implementation-defined
 
     //- Construct/copy/destroy
     //

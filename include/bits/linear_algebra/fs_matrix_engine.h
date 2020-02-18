@@ -28,7 +28,8 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 
 // 6.4.4 | class fs_matrix_engine<T, R, C>
 template <class T, size_t R, size_t C>
-class fs_matrix_engine {
+class fs_matrix_engine : public matrix_engine<fs_matrix_engine<T, R, C>, writable_matrix_engine_tag>
+{
     static_assert(R >= 1 && C >= 1, "Row and column count must be at least one.");
     static_assert(is_matrix_element_v<T>, "Element type must be an arithmetic field type.");
 
@@ -95,14 +96,14 @@ class fs_matrix_engine {
     {
         // assert(i < R);
         // assert(j < C);
-        return values_[i * C + j];
+        return values_[i * column_capacity() + j];
     }
 
     constexpr const_reference operator()(size_type i, size_type j) const
     {
         // assert(i < R);
         // assert(j < C);
-        return values_[i * C + j];
+        return values_[i * column_capacity() + j];
     }
 
     //- Modifiers
@@ -111,13 +112,15 @@ class fs_matrix_engine {
 
     constexpr void swap_columns(size_type j1, size_type j2) noexcept
     {
-        for (size_type i = 0; i < R; ++i)
+        using detail::times;
+        for (size_type i : times(rows()))
             std::swap((*this)(i, j1), (*this)(i, j2));
     }
 
     constexpr void swap_rows(size_type i1, size_type i2) noexcept
     {
-        for (size_type j = 0; j < C; ++j)
+        using detail::times;
+        for (size_type j : times(columns()))
             std::swap((*this)(i1, j), (*this)(i2, j));
     }
 };

@@ -39,4 +39,5 @@
 
 // stuff that wasn't mentioned in the paper
 #include "bits/linear_algebra/ext.h"
+#include "bits/linear_algebra/ext_det.h"
 

@@ -83,4 +83,34 @@ template <class T> constexpr inline bool is_matrix_element_v =
     std::is_arithmetic_v<T> ||
     detail::is_complex_v<T>;
 
+// CRTP-style base class for matrix engines (well, and `matrix` class itself).
+template <class ET, class MCT>
+class matrix_engine {
+  public:
+    using engine_category = MCT;
+    using size_type = std::size_t;
+
+    //- Typed accessor to the actual engine type.
+    //
+    constexpr ET& engine() noexcept { return static_cast<ET&>(*this); }
+    constexpr ET& engine() const noexcept { return static_cast<ET const&>(*this); }
+
+    //- Capacity
+    //
+    constexpr auto columns() const noexcept { return engine().columns(); }
+    constexpr auto rows() const noexcept { return engine().rows(); }
+    constexpr auto size() const noexcept { return engine().size(); }
+    constexpr auto column_capacity() const noexcept { return engine().column_capacity(); }
+    constexpr auto row_capacity() const noexcept { return engine().row_capacity(); }
+    constexpr auto capacity() const noexcept { return engine().capacity(); }
+
+    //- Element access
+    //
+    constexpr decltype(auto) operator()(size_type i, size_type j) const { return engine()(i, j); }
+
+    //- Modifiers
+    //
+    constexpr void swap(matrix_engine<ET, MCT>& rhs) { engine().swap(rhs); }
+};
+
 } // end namespace

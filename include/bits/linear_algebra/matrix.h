@@ -28,20 +28,6 @@
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
-// transform's category tag from matrix to column
-template<typename T, typename From, typename To> struct transform_type {
-    using type = std::conditional_t<
-        std::is_same_v<T, From>,
-        To,
-        From
-        >;
-};
-template<typename VCT> struct tc { using type = VCT; };
-template<> struct tc<readable_matrix_engine_tag>  { using type = readable_vector_engine_tag; };
-template<> struct tc<writable_matrix_engine_tag>  { using type = writable_vector_engine_tag; };
-template<> struct tc<resizable_matrix_engine_tag> { using type = writable_vector_engine_tag; };
-
-
 // 6.5.2 | class matrix<ET, OT>
 template <class ET, class OT>
 class matrix {
@@ -103,7 +89,27 @@ class matrix {
         resize(size);
     }
 
-    constexpr matrix(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable);
+    constexpr matrix(size_type rows, size_type cols, size_type rowcap, size_type colcap) LA_CONCEPT(is_resizable)
+    {
+        reserve(rowcap, colcap);
+        resize(rows, cols);
+    }
+
+    constexpr explicit matrix(ET&& _engine) : engine_{std::forward<ET>(_engine)} {} // EXT
+
+    // EXT
+    template<
+        typename Initializer,
+        typename std::enable_if_t<
+            std::is_invocable_r_v<value_type, Initializer, size_type, size_type>,
+            int> = 0
+    >
+    constexpr explicit matrix(Initializer const& _init) noexcept
+    {
+        using detail::times;
+        for (auto [i, j] : times(0, rows()) * times(0, columns()))
+            (*this)(i, j) = _init(i, j);
+    }
 
     constexpr matrix& operator=(matrix&&) noexcept = default;
     constexpr matrix& operator=(matrix const&) = default;
@@ -145,18 +151,22 @@ class matrix {
 
     //- Columns, rows, submatrices, transposes, and the Hermitian
     //
-    constexpr column_type column(size_type j) noexcept {
-        return column_type(typename column_type::engine_type(engine_, j)); }
-    constexpr const_column_type column(size_type j) const noexcept {
-        return const_column_type(typename const_column_type::engine_type(const_cast<ET&>(engine_), j)); }
-    constexpr row_type row(size_type i) noexcept { return engine_.row(i); }
-    constexpr const_row_type row(size_type i) const noexcept { return engine_.row(i); }
+    constexpr column_type column(size_type j) noexcept { return column_type(typename column_type::engine_type(engine_, j)); }
+    constexpr const_column_type column(size_type j) const noexcept { return const_column_type(typename const_column_type::engine_type(const_cast<ET&>(engine_), j)); }
+    constexpr row_type row(size_type i) noexcept { return row_type(typename row_type::engine_type(engine_, i)); }
+    constexpr const_row_type row(size_type i) const noexcept { return const_row_type(typename const_row_type::engine_type(const_cast<ET&>(engine_), i)); }
     constexpr submatrix_type submatrix(size_type ri, size_type rn, size_type ci, size_type cn) noexcept {
-        return engine_.submatrix(ri, rn, ci, cn);
+        return submatrix_type(typename submatrix_type::engine_type(const_cast<ET&>(engine_), ri, rn, ci, cn));
     }
     constexpr const_submatrix_type submatrix(size_type ri, size_type rn,
                                              size_type ci, size_type cn) const noexcept {
-        return engine_.submatrix(ri, rn, ci, cn);
+        return const_submatrix_type(typename const_submatrix_type::engine_type(const_cast<ET*>(&engine_), ri, rn, ci, cn));
+    }
+    constexpr submatrix_type submatrix(size_type r, size_type c) noexcept { // EXT
+        return submatrix(r, 1, c, 1);
+    }
+    constexpr const_submatrix_type submatrix(size_type r, size_type c) const noexcept { // EXT
+        return submatrix(r, 1, c, 1);
     }
     constexpr transpose_type t() noexcept; // TODO
     constexpr const_transpose_type t() const noexcept; // TODO
