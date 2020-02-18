@@ -99,8 +99,8 @@ constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value
         //         auto const sub = m.submatrix(i, j);
         //         auto const dsu = det(sub);
         //         return (i + j) % 2 == 0
-        //             ? acc + m(i, j) // * det(m.submatrix(i, j))
-        //             : acc - m(i, j);//* det(m.submatrix(i, j));
+        //             ? acc + m(i, j) * det(m.submatrix(i, j))
+        //             : acc - m(i, j) * det(m.submatrix(i, j));
         //     }
         // );
 }
