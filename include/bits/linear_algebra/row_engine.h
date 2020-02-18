@@ -46,9 +46,9 @@ class row_engine {
     using engine_category = VCT;
     using element_type = typename ET::element_type;
     using value_type = typename ET::value_type;
-    using pointer = std::conditional_t<is_writable_engine_v<ET>, value_type*, value_type const*>;
+    using pointer = std::conditional_t<!is_readonly_engine_v<ET>, typename ET::pointer, typename ET::const_pointer>;
     using const_pointer = typename ET::const_pointer;
-    using reference = std::conditional_t<is_writable_engine_v<ET>, value_type&, value_type const&>;
+    using reference = std::conditional_t<!is_readonly_engine_v<ET>, typename ET::reference, typename ET::const_reference>;
     using const_reference = typename ET::const_reference;
     using difference_type = typename ET::difference_type;
     using size_type = typename ET::size_type;

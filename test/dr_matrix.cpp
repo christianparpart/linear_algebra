@@ -56,14 +56,63 @@ TEST_CASE("dr_matrix.row")
         auto const me = dmat<int>(imat<3, 4>{1, 2, 3, 4,
                                              2,11, 4,13,
                                              3, 4, 5, 6});
-        dmat<int> m2 = m1;
-        dmat<int>::row_type r = m2.row(1);
-        // r(1) = 11;
-        // r(3) = 13;
-        // m2.row(1)(1) = 11;
-        // m2.row(1)(3) = 13;
-        // CHECK(m2.row(1) == ivec<4>{2, 11, 4, 13});
-        // CHECK(m2 == me);
+        dmat<int> const m2 = m1;
+        auto r = m2.row(1);
+        r(1) = 11;
+        r(3) = 13;
+        CHECK(m2.row(1) == ivec<4>{2, 11, 4, 13});
+        CHECK(m2 == me);
+    }
+}
+
+TEST_CASE("dr_matrix.column")
+{
+    auto static const m1 = dmat<int>(imat<3, 4>{1, 2, 3, 4,
+                                                2, 3, 4, 5,
+                                                3, 4, 5, 6});
+
+    SECTION("read")
+    {
+        CHECK(m1.column(0) == ivec<3>{1, 2, 3});
+        CHECK(m1.column(1) == ivec<3>{2, 3, 4});
+        CHECK(m1.column(2) == ivec<3>{3, 4, 5});
+        CHECK(m1.column(3) == ivec<3>{4, 5, 6});
+    }
+
+    SECTION("write")
+    {
+        auto const me = imat<3, 4>{1, 2, 3, 7,
+                                   2, 3, 4, 6,
+                                   3, 4, 5, 5};
+        auto m2 = m1;
+        auto c23 = m2.column(3);
+        c23(0) = 7;
+        c23(1) = 6;
+        c23(2) = 5;
+        CHECK(m2.column(3) == ivec<3>{7, 6, 5});
+        CHECK(m2 == me);
+    }
+}
+
+TEST_CASE("dr_matrix.submatrix")
+{
+    auto const base = dmat<int>(imat<4, 5>{ 0,  1,  2,  3,  4,
+                                            10, 11, 12, 13, 14,
+                                            20, 21, 22, 23, 24,
+                                            30, 31, 32, 33, 34});
+    SECTION("single") {
+        auto const m1 = base.submatrix(2, 3);
+        auto const me = dmat<int>(imat<3, 4>{ 0,  1,  2,  4,
+                                              10, 11, 12, 14,
+                                              30, 31, 32, 34});
+        REQUIRE(m1 == me);
+    }
+
+    SECTION("multiple") {
+        auto const m1 = base.submatrix(1, 2, 1, 3);
+        auto const me = imat<2, 2>{ 0,  4,
+                                    30, 34};
+        REQUIRE(m1 == me);
     }
 }
 
