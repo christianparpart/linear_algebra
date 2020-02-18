@@ -70,7 +70,7 @@ namespace detail { // {{{
 } // }}}
 
 template <typename ET, typename OT>
-constexpr auto det(matrix<matrix_engine<ET, OT>, OT> const& m) // -> typename matrix<ET, OT>::value_type
+constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value_type
 {
     using detail::times;
     using detail::reduce;
@@ -90,16 +90,19 @@ constexpr auto det(matrix<matrix_engine<ET, OT>, OT> const& m) // -> typename ma
              - m(2, 1) * m(1, 2) * m(0, 0)
              - m(2, 2) * m(1, 0) * m(0, 1);
     else // NxN
-        return reduce(
-            times(m.columns()),
-            0,
-            [&](auto acc, auto j) constexpr {
-                std::size_t const i = 0;
-                return (i + j) % 2 == 0
-                    ? acc + m(i, j) * det(m.submatrix(i, j))
-                    : acc - m(i, j) * det(m.submatrix(i, j));
-            }
-        );
+        return value_type{}; // TODO (template recursion death)
+        // return reduce(
+        //     times(m.columns()),
+        //     0,
+        //     [&](auto acc, auto j) constexpr {
+        //         std::size_t const i = 0;
+        //         auto const sub = m.submatrix(i, j);
+        //         auto const dsu = det(sub);
+        //         return (i + j) % 2 == 0
+        //             ? acc + m(i, j) // * det(m.submatrix(i, j))
+        //             : acc - m(i, j);//* det(m.submatrix(i, j));
+        //     }
+        // );
 }
 
 template <class OT, class T, std::size_t R, std::size_t C>
