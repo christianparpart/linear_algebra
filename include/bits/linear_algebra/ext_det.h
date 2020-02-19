@@ -3,6 +3,8 @@
 #include "base.h"
 #include "matrix.h"
 #include "fs_matrix_engine.h"
+#include "dr_matrix_engine.h"
+#include "support.h"
 #include "concepts.h"
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
@@ -69,40 +71,27 @@ namespace detail { // {{{
     }
 } // }}}
 
-template <typename ET, typename OT>
-constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value_type
+template <typename T, typename AT, typename OT>
+constexpr auto det(matrix<dr_matrix_engine<T, AT>, OT> const& m) // -> typename matrix<ET, OT>::value_type
 {
     using detail::times;
     using detail::reduce;
-    using value_type = typename ET::value_type;
+    using value_type = typename matrix<dr_matrix_engine<T, AT>, OT>::value_type;
 
     if (m.rows() != m.columns())
         return value_type{};
-    else if (m.rows() <= 1) // 1x1
-        return m(0, 0);
-    else if (m.rows() == 2) // 2x2
-        return m(0, 0) * m(1, 1) - m(1, 0) * m(0, 1);
-    else if (m.rows() == 3) // 3x3
-        return m(0, 0) * m(1, 1) * m(2, 2)
-             + m(1, 0) * m(2, 1) * m(0, 2)
-             + m(2, 0) * m(0, 1) * m(1, 2)
-             - m(2, 0) * m(1, 1) * m(0, 2)
-             - m(2, 1) * m(1, 2) * m(0, 0)
-             - m(2, 2) * m(1, 0) * m(0, 1);
-    else // NxN
-        return value_type{}; // TODO (template recursion death)
-        // return reduce(
-        //     times(m.columns()),
-        //     0,
-        //     [&](auto acc, auto j) constexpr {
-        //         std::size_t const i = 0;
-        //         auto const sub = m.submatrix(i, j);
-        //         auto const dsu = det(sub);
-        //         return (i + j) % 2 == 0
-        //             ? acc + m(i, j) * det(m.submatrix(i, j))
-        //             : acc - m(i, j) * det(m.submatrix(i, j));
-        //     }
-        // );
+    else
+        // return value_type{};
+        return reduce(
+            times(m.columns()),
+            0,
+            [&](auto acc, auto j) constexpr {
+                std::size_t const i = 0;
+                return (i + j) % 2 == 0
+                    ? acc + m(i, j) * det(materialize(m.submatrix(i, j)))
+                    : acc - m(i, j) * det(materialize(m.submatrix(i, j)));
+            }
+        );
 }
 
 template <class OT, class T, std::size_t R, std::size_t C>
@@ -121,8 +110,8 @@ constexpr T det(matrix<fs_matrix_engine<T, R, C>, OT> const& a) LA_CONCEPT(R == 
             0,
             [&](auto acc, auto j) constexpr {
                 return (i + j) % 2 == 0
-                    ? acc + a(i, j) * det(a.submatrix(i, j))
-                    : acc - a(i, j) * det(a.submatrix(i, j));
+                    ? acc + a(i, j) * det(materialize(a.submatrix(i, j)))
+                    : acc - a(i, j) * det(materialize(a.submatrix(i, j)));
             }
         );
     }
@@ -133,9 +122,14 @@ constexpr T det(matrix<fs_matrix_engine<T, R, C>, OT> const& a) LA_CONCEPT(R == 
             times(a.columns()),
             0,
             [&](auto acc, auto i) constexpr {
+                auto const m = materialize(a.submatrix(i, j));
+                auto const detM = det(m);
                 return (i + j) % 2 == 0
-                    ? acc + a(i, j) * det(a.submatrix(i, j))
-                    : acc - a(i, j) * det(a.submatrix(i, j));
+                    ? acc + a(i, j) * detM
+                    : acc - a(i, j) * detM;
+                // return (i + j) % 2 == 0
+                //     ? acc + a(i, j) * det(materialize(a.submatrix(i, j)))
+                //     : acc - a(i, j) * det(materialize(a.submatrix(i, j)));
             }
         );
     }

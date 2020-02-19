@@ -258,9 +258,19 @@ constexpr auto operator>>(S _input, std::pair<F, std::tuple<Args...>> _chain)
 
 // ---------------------------------------------------------------------------------------------------
 
+template <typename Container, typename UnaryPred>
+constexpr bool all_of(Container&& _container, UnaryPred _unaryPred)
+{
+    for (auto&& value : _container)
+        if (!_unaryPred(value))
+            return false;
+
+    return true;
+}
+
 // constexpr/containered version of `std::for_each`
 template <typename Container, typename Lambda>
-constexpr inline void for_each(Container&& _container, Lambda&& lambda)
+constexpr void for_each(Container&& _container, Lambda&& lambda)
 {
     for (auto&& value : _container)
         lambda(value);
@@ -268,10 +278,10 @@ constexpr inline void for_each(Container&& _container, Lambda&& lambda)
 
 // constexpr/containered version of `std::reduce(begin, end, init, op)``
 template <typename Container, typename T, typename BinaryOp>
-constexpr inline T reduce(Container&& _container, T&& _init, BinaryOp _binaryOp)
+constexpr T reduce(Container&& _container, T&& _init, BinaryOp _binaryOp)
 {
     auto result = T{std::move(_init)};
-    for (auto && value : _container)
+    for (auto&& value : _container)
         result = _binaryOp(result, value);
     return result;
 }

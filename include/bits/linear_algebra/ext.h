@@ -15,8 +15,10 @@
 #pragma once
 
 #include "base.h"
+#include "support.h"
 #include "vector.h"
 #include "matrix.h"
+#include "convenience_aliases.h"
 
 #include <ostream>
 
@@ -25,31 +27,25 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 template <typename ET1, typename OT1, typename ET2, typename OT2>
 constexpr bool operator==(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2) noexcept
 {
-    // TODO: replace naive implementation, use of std::equal?
-    if (v1.size() != v2.size())
-        return false;
-
     using detail::times;
-    for (auto i : times(v1.size()))
-        if (!(v1(i) == v2(i)))
-            return false;
+    return v1.size() == v2.size() && all_of(times(v1.size()), [&](auto i) { return v1(i) == v2(i); });
+}
 
-    return true;
+template <typename ET1, typename OT1, typename ET2, typename OT2>
+constexpr bool operator!=(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2) noexcept
+{
+    return !(v1 == v2);
 }
 
 template <typename ET1, typename OT1, typename ET2, typename OT2>
 constexpr bool operator==(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2) noexcept
 {
-    // TODO: replace naive implementationbb:w, use of std::equal?
-    if (m1.rows() != m2.rows() || m1.columns() != m2.columns())
-        return false;
-
     using detail::times;
-    for (auto [i, j] : times(m1.rows()) * times(m1.columns()))
-        if (!(m1(i, j) == m2(i, j)))
-            return false;
-
-    return true;
+    using detail::all_of;
+    return m1.size() == m2.size()
+        && all_of(times(m1.rows()) * times(m2.rows()), [&](auto ij) {
+                return m1(std::get<0>(ij), std::get<1>(ij))
+                    == m2(std::get<0>(ij), std::get<1>(ij)); });
 }
 
 template <typename ET1, typename OT1, typename ET2, typename OT2>
@@ -61,13 +57,10 @@ constexpr bool operator!=(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2
 template <typename ET, typename OT>
 std::ostream& operator<<(std::ostream& os, vector<ET, OT>const& _vec)
 {
+    using detail::times;
     os << '(';
-    for (std::size_t i = 0; i < _vec.size(); ++i)
-    {
-        if (i != 0)
-            os << ", ";
-        os << _vec(i);
-    }
+    for (auto i : times(_vec.size()))
+        os << (i != 0 ? ", " : "") << _vec(i);
     os << ')';
     return os;
 }
@@ -75,22 +68,35 @@ std::ostream& operator<<(std::ostream& os, vector<ET, OT>const& _vec)
 template <typename ET, typename OT>
 std::ostream& operator<<(std::ostream& os, matrix<ET, OT> const& _mat)
 {
+    using detail::times;
     os << '{';
-    for (std::size_t i = 0; i < _mat.rows(); ++i)
-    {
-        if (i != 0)
-            os << ", ";
-        os << '{';
-        for (std::size_t j = 0; j < _mat.columns(); ++j)
-        {
-            if (j != 0)
-                os << ", ";
-            os << _mat(i, j);
-        }
-        os << '}';
-    }
+    for (auto [i, j] : times(_mat.rows()) * times(_mat.columns()))
+        os << (j == 0 && i != 0 ? "}, " : "")   // row end
+           << (j == 0 ? "{" : ", ")             // row begin
+           << _mat(i, j);
     os << '}';
     return os;
+}
+
+template <typename ET, typename OT>
+auto materialize(matrix<ET, OT> const& mat)
+{
+    dr_matrix<typename ET::value_type> res;//(mat);
+    res.resize(mat.size());
+    using detail::times;
+    for (auto [i, j] : times(mat.rows()) * times(mat.columns()))
+        res(i, j) = mat(i, j);
+    return res;
+}
+
+template <typename ET, typename MCT, typename OT, typename T, std::size_t R, std::size_t C>
+constexpr auto materialize(matrix<submatrix_engine<fs_matrix_engine<T, R, C>, MCT>, OT> const& mat)
+{
+    fs_matrix<T, R, C> res;
+    using detail::times;
+    for (auto [i, j] : times(mat.rows()) * times(mat.columns()))
+        res(i, j) = mat(i, j);
+    return res;
 }
 
 } // end namespace
