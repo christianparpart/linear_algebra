@@ -16,8 +16,8 @@
 #include <linear_algebra>
 #include <ostream>
 
-template <typename T> using dvec = LINEAR_ALGEBRA_NAMESPACE::dr_vector<T>;
-template <typename T> using dmat = LINEAR_ALGEBRA_NAMESPACE::dr_matrix<T>;
+template <typename T> using dvec = LINEAR_ALGEBRA_NAMESPACE::dyn_vector<T>;
+template <typename T> using dmat = LINEAR_ALGEBRA_NAMESPACE::dyn_matrix<T>;
 
 template <typename T, size_t N> using vec = LINEAR_ALGEBRA_NAMESPACE::fs_vector<T, N>;
 template <size_t N> using ivec = vec<int, N>;

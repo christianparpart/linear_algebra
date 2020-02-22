@@ -24,10 +24,10 @@
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
 template <class T, class AT = std::allocator<T>>
-using dr_vector = vector<dr_vector_engine<T, AT>, matrix_operation_traits>;
+using dyn_vector = vector<dr_vector_engine<T, AT>, matrix_operation_traits>;
 
 template <class T, class AT = std::allocator<T>>
-using dr_matrix = matrix<dr_matrix_engine<T, AT>, matrix_operation_traits>;
+using dyn_matrix = matrix<dr_matrix_engine<T, AT>, matrix_operation_traits>;
 
 template <class T, int32_t N>
 using fs_vector = vector<fs_vector_engine<T, N>, matrix_operation_traits>;
