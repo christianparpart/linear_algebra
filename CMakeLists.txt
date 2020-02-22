@@ -43,6 +43,7 @@ endif()
 
 if(LINEAR_ALGEBRA_COVERAGE AND NOT MSVC)
     add_compile_options(-g --coverage)
+    add_definitions(-DLINEAR_ALGEBRA_COVERAGE=1)
     set(CMAKE_EXE_LINKER_FLAGS "--coverage ${CMAKE_EXE_LINKER_FLAGS}")
     message("-- [code coverage] Enabled.")
 else()

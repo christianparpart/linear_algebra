@@ -20,16 +20,16 @@
 
 TEST_CASE("negation: vector")
 {
-    auto static constexpr v1 = ivec<3>{0, 1, 2};
-    auto static constexpr v2 = -v1;
-    auto static constexpr v3 = ivec<3>{0, -1, -2};
+    auto static CONSTEXPR v1 = ivec<3>{0, 1, 2};
+    auto static CONSTEXPR v2 = -v1;
+    auto static CONSTEXPR v3 = ivec<3>{0, -1, -2};
     REQUIRE(v2 == v3);
 }
 
 TEST_CASE("negation: matrix")
 {
-    auto static constexpr m1 = imat<2, 2>{1, -2, 3, -4};
-    auto static constexpr m2 = -m1;
-    auto static constexpr m3 = imat<2, 2>{-1, 2, -3, 4};
+    auto static CONSTEXPR m1 = imat<2, 2>{1, -2, 3, -4};
+    auto static CONSTEXPR m2 = -m1;
+    auto static CONSTEXPR m3 = imat<2, 2>{-1, 2, -3, 4};
     REQUIRE(m2 == m3);
 }

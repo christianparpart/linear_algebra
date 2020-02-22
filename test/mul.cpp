@@ -20,68 +20,68 @@
 
 TEST_CASE("multiplication: vector * vector")
 {
-    auto static constexpr v1 = ivec<3>{5, 2, 3};
-    auto static constexpr v2 = ivec<3>{1, 2, 5};
-    auto static constexpr v3 = v1 * v2;
-    auto static constexpr expected = 24;
+    auto static CONSTEXPR v1 = ivec<3>{5, 2, 3};
+    auto static CONSTEXPR v2 = ivec<3>{1, 2, 5};
+    auto static CONSTEXPR v3 = v1 * v2;
+    auto static CONSTEXPR expected = 24;
     REQUIRE(v3 == expected);
 }
 
 TEST_CASE("multiplication: scalar * vector")
 {
-    auto static constexpr v1 = ivec<3>{5, 2, 3};
-    auto static constexpr s1 = 4;
-    auto static constexpr v2 = s1 * v1;
-    auto static constexpr expected = ivec<3>{20, 8, 12};
+    auto static CONSTEXPR v1 = ivec<3>{5, 2, 3};
+    auto static CONSTEXPR s1 = 4;
+    auto static CONSTEXPR v2 = s1 * v1;
+    auto static CONSTEXPR expected = ivec<3>{20, 8, 12};
     REQUIRE(v2 == expected);
 }
 
 TEST_CASE("multiplication: vector * scalar")
 {
-    auto static constexpr v1 = ivec<3>{5, 2, 3};
-    auto static constexpr s1 = 4;
-    auto static constexpr v2 = v1 * s1;
-    auto static constexpr expected = ivec<3>{20, 8, 12};
+    auto static CONSTEXPR v1 = ivec<3>{5, 2, 3};
+    auto static CONSTEXPR s1 = 4;
+    auto static CONSTEXPR v2 = v1 * s1;
+    auto static CONSTEXPR expected = ivec<3>{20, 8, 12};
     REQUIRE(v2 == expected);
 }
 
 TEST_CASE("multiplication: scalar * matrix")
 {
-    auto static constexpr m1 = imat<2, 3>{1, 2, 3, 4, 5, 6};
-    auto static constexpr s1 = 2;
-    auto static constexpr m2 = s1 * m1;
-    auto static constexpr expected = imat<2, 3>{2, 4, 6, 8, 10, 12};
+    auto static CONSTEXPR m1 = imat<2, 3>{1, 2, 3, 4, 5, 6};
+    auto static CONSTEXPR s1 = 2;
+    auto static CONSTEXPR m2 = s1 * m1;
+    auto static CONSTEXPR expected = imat<2, 3>{2, 4, 6, 8, 10, 12};
     REQUIRE(m2 == expected);
 }
 
 TEST_CASE("multiplication: matrix * scalar")
 {
-    auto static constexpr m1 = imat<2, 3>{1, 2, 3, 4, 5, 6};
-    auto static constexpr s1 = 2;
-    auto static constexpr m2 = m1 * s1;
-    auto static constexpr expected = imat<2, 3>{2, 4, 6, 8, 10, 12};
+    auto static CONSTEXPR m1 = imat<2, 3>{1, 2, 3, 4, 5, 6};
+    auto static CONSTEXPR s1 = 2;
+    auto static CONSTEXPR m2 = m1 * s1;
+    auto static CONSTEXPR expected = imat<2, 3>{2, 4, 6, 8, 10, 12};
     REQUIRE(m2 == expected);
 }
 
 TEST_CASE("multiplication: matrix * vector")
 {
-    auto static constexpr m = imat<2, 3>{1, 2, 3,
+    auto static CONSTEXPR m = imat<2, 3>{1, 2, 3,
                                          4, 5, 6};
-    auto static constexpr v = ivec<3>{3, 1, 2};
-    auto static constexpr b = m * v;
-    auto static constexpr expected = ivec<2>{11, 29};
+    auto static CONSTEXPR v = ivec<3>{3, 1, 2};
+    auto static CONSTEXPR b = m * v;
+    auto static CONSTEXPR expected = ivec<2>{11, 29};
     REQUIRE(b == expected);
 }
 
 TEST_CASE("multiplication: matrix * matrix")
 {
-    auto static constexpr m1 = imat<2, 3>{1, 2, 3,
+    auto static CONSTEXPR m1 = imat<2, 3>{1, 2, 3,
                                           2, 3, 4};
-    auto static constexpr m2 = imat<3, 4>{1, 2, 3, 4,
+    auto static CONSTEXPR m2 = imat<3, 4>{1, 2, 3, 4,
                                           2, 3, 4, 5,
                                           3, 4, 5, 6};
-    auto static constexpr m3 = m1 * m2;
-    auto static constexpr me = imat<2, 4>{14, 20, 26, 32,
+    auto static CONSTEXPR m3 = m1 * m2;
+    auto static CONSTEXPR me = imat<2, 4>{14, 20, 26, 32,
                                           20, 29, 38, 47};
     REQUIRE(m3 == me);
 }

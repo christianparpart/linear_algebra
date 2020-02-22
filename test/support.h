@@ -25,3 +25,8 @@ template <size_t N> using ivec = vec<int, N>;
 template <typename T, size_t R, size_t C> using mat = LINEAR_ALGEBRA_NAMESPACE::fs_matrix<T, R, C>;
 template <size_t R, size_t C> using imat = mat<int, R, C>;
 
+#if defined(LINEAR_ALGEBRA_COVERAGE)
+#define CONSTEXPR const
+#else
+#define CONSTEXPR constexpr
+#endif

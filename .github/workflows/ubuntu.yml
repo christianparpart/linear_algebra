@@ -10,31 +10,6 @@ on:
       - master
 
 jobs:
-  build_gcc:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: "initialize sub modules"
-        run: git submodule update --init --recursive
-      - name: "install dependencies"
-        run: |
-          set -ex
-          cat /etc/apt/sources.list
-          sudo apt -q update
-          sudo apt install -y "g++-9" python-pip
-          sudo pip install codecov
-      - name: "create build directory"
-        run: mkdir build
-      - name: "cmake"
-        run: |
-          cd build && cmake .. \
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER=g++-9
-      - name: "build"
-        run: cmake --build build/ -- -j3
-      - name: "test"
-        run: ./build/test_linear_algebra
-      - name: "codecov"
-        run: codecov --flags all --gcov-glob '*/linear_algebra/*'
   build_clang:
     runs-on: ubuntu-latest
     steps:
@@ -52,8 +27,59 @@ jobs:
       - name: "cmake"
         run: |
           cd build && cmake .. \
+            -DLINEAR_ALGEBRA_COVERAGE=OFF \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER=clang++-9
       - name: "build"
         run: cmake --build build/ -- -j3
       - name: "test"
         run: ./build/test_linear_algebra
+  build_gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: "initialize sub modules"
+        run: git submodule update --init --recursive
+      - name: "install dependencies"
+        run: |
+          set -ex
+          cat /etc/apt/sources.list
+          sudo apt -q update
+          sudo apt install -y "g++-9"
+          sudo pip install codecov
+      - name: "create build directory"
+        run: mkdir build
+      - name: "cmake"
+        run: |
+          cd build && cmake .. \
+            -DLINEAR_ALGEBRA_COVERAGE=OFF \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER=g++-9
+      - name: "build"
+        run: cmake --build build/ -- -j3
+      - name: "test"
+        run: ./build/test_linear_algebra
+  build_gcc_codecov:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: "initialize sub modules"
+        run: git submodule update --init --recursive
+      - name: "install dependencies"
+        run: |
+          set -ex
+          cat /etc/apt/sources.list
+          sudo apt -q update
+          sudo apt install -y "g++-9" python-pip
+          sudo pip install codecov
+      - name: "create build directory"
+        run: mkdir build
+      - name: "cmake"
+        run: |
+          cd build && cmake .. \
+            -DLINEAR_ALGEBRA_COVERAGE=ON \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER=g++-9
+      - name: "build"
+        run: cmake --build build/ -- -j3
+      - name: "test"
+        run: ./build/test_linear_algebra
+      - name: "codecov"
+        run: codecov --flags all --gcov-glob '*_test.cpp' 'build/*'

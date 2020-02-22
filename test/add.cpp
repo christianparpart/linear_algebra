@@ -20,18 +20,18 @@
 
 TEST_CASE("addition: vector")
 {
-    auto static constexpr v1 = ivec<3>{0, 1, 2};
-    auto static constexpr v2 = ivec<3>{3, 4, 5};
-    auto static constexpr v3 = v1 + v2;
-    auto static constexpr expected = ivec<3>{3, 5, 7};
+    auto static CONSTEXPR v1 = ivec<3>{0, 1, 2};
+    auto static CONSTEXPR v2 = ivec<3>{3, 4, 5};
+    auto static CONSTEXPR v3 = v1 + v2;
+    auto static CONSTEXPR expected = ivec<3>{3, 5, 7};
     REQUIRE(v3 == expected);
 }
 
 TEST_CASE("addition: matrix")
 {
-    auto static constexpr m1 = imat<2, 2>{1, 2, 3, 4};
-    auto static constexpr m2 = imat<2, 2>{2, 3, 4, 5};
-    auto static constexpr m3 = m1 + m2;
-    auto static constexpr expected = imat<2, 2>{3, 5, 7, 9};
+    auto static CONSTEXPR m1 = imat<2, 2>{1, 2, 3, 4};
+    auto static CONSTEXPR m2 = imat<2, 2>{2, 3, 4, 5};
+    auto static CONSTEXPR m3 = m1 + m2;
+    auto static CONSTEXPR expected = imat<2, 2>{3, 5, 7, 9};
     REQUIRE(m3 == expected);
 }
