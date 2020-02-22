@@ -135,12 +135,12 @@ TEST_CASE("ext.det")
         REQUIRE(d == 100);
     }
 
-    SECTION("fs.4x4") {
-        // auto constexpr a = imat<4, 4>{4, 3, 2, 2,
-        //                               0, 1, 0,-2,
-        //                               1,-1, 0, 3,
-        //                               2, 3, 0, 1};
-        // auto constexpr d = det(a);
-        // REQUIRE(d == -10);
-    }
+    // SECTION("fs.4x4") {
+    //     auto constexpr a = imat<4, 4>{4, 3, 2, 2,
+    //                                   0, 1, 0,-2,
+    //                                   1,-1, 0, 3,
+    //                                   2, 3, 0, 1};
+    //     auto constexpr d = det(a);
+    //     REQUIRE(d == -10);
+    // }
 }

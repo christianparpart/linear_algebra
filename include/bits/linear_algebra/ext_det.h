@@ -88,8 +88,8 @@ constexpr auto det(matrix<dr_matrix_engine<T, AT>, OT> const& m) // -> typename 
             [&](auto acc, auto j) constexpr {
                 std::size_t const i = 0;
                 return (i + j) % 2 == 0
-                    ? acc + m(i, j) * det(materialize(m.submatrix(i, j)))
-                    : acc - m(i, j) * det(materialize(m.submatrix(i, j)));
+                    ? acc + m(i, j) * det(m.submatrix(i, j))
+                    : acc - m(i, j) * det(m.submatrix(i, j));
             }
         );
 }
@@ -110,8 +110,8 @@ constexpr T det(matrix<fs_matrix_engine<T, R, C>, OT> const& a) LA_CONCEPT(R == 
             0,
             [&](auto acc, auto j) constexpr {
                 return (i + j) % 2 == 0
-                    ? acc + a(i, j) * det(materialize(a.submatrix(i, j)))
-                    : acc - a(i, j) * det(materialize(a.submatrix(i, j)));
+                    ? acc + a(i, j) * det(a.submatrix(i, j))
+                    : acc - a(i, j) * det(a.submatrix(i, j));
             }
         );
     }
@@ -122,14 +122,9 @@ constexpr T det(matrix<fs_matrix_engine<T, R, C>, OT> const& a) LA_CONCEPT(R == 
             times(a.columns()),
             0,
             [&](auto acc, auto i) constexpr {
-                auto const m = materialize(a.submatrix(i, j));
-                auto const detM = det(m);
                 return (i + j) % 2 == 0
-                    ? acc + a(i, j) * detM
-                    : acc - a(i, j) * detM;
-                // return (i + j) % 2 == 0
-                //     ? acc + a(i, j) * det(materialize(a.submatrix(i, j)))
-                //     : acc - a(i, j) * det(materialize(a.submatrix(i, j)));
+                    ? acc + a(i, j) * det(a.submatrix(i, j))
+                    : acc - a(i, j) * det(a.submatrix(i, j));
             }
         );
     }

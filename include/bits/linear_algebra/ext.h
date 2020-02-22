@@ -43,9 +43,10 @@ constexpr bool operator==(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2
     using detail::times;
     using detail::all_of;
     return m1.size() == m2.size()
-        && all_of(times(m1.rows()) * times(m2.rows()), [&](auto ij) {
-                return m1(std::get<0>(ij), std::get<1>(ij))
-                    == m2(std::get<0>(ij), std::get<1>(ij)); });
+        && all_of(times(m1.rows()) * times(m2.columns()), [&](auto ij) {
+            return m1(std::get<0>(ij), std::get<1>(ij))
+                == m2(std::get<0>(ij), std::get<1>(ij));
+        });
 }
 
 template <typename ET1, typename OT1, typename ET2, typename OT2>
@@ -74,29 +75,8 @@ std::ostream& operator<<(std::ostream& os, matrix<ET, OT> const& _mat)
         os << (j == 0 && i != 0 ? "}, " : "")   // row end
            << (j == 0 ? "{" : ", ")             // row begin
            << _mat(i, j);
-    os << '}';
+    os << "}}";
     return os;
-}
-
-template <typename ET, typename OT>
-auto materialize(matrix<ET, OT> const& mat)
-{
-    dr_matrix<typename ET::value_type> res;//(mat);
-    res.resize(mat.size());
-    using detail::times;
-    for (auto [i, j] : times(mat.rows()) * times(mat.columns()))
-        res(i, j) = mat(i, j);
-    return res;
-}
-
-template <typename ET, typename MCT, typename OT, typename T, std::size_t R, std::size_t C>
-constexpr auto materialize(matrix<submatrix_engine<fs_matrix_engine<T, R, C>, MCT>, OT> const& mat)
-{
-    fs_matrix<T, R, C> res;
-    using detail::times;
-    for (auto [i, j] : times(mat.rows()) * times(mat.columns()))
-        res(i, j) = mat(i, j);
-    return res;
 }
 
 } // end namespace

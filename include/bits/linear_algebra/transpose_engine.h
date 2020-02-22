@@ -27,9 +27,9 @@ class transpose_engine {
     using engine_category = MCT;
     using element_type = typename ET::element_type;
     using value_type = typename ET::value_type;
-    using pointer = TODO; //- See below
+    using pointer = std::conditional_t<is_readonly_engine_v<ET>, typename ET::const_pointer, typename ET::pointer>;
     using const_pointer = typename ET::const_pointer;
-    using reference = TODO; //- See below
+    using reference = std::conditional_t<is_readonly_engine_v<ET>, typename ET::const_reference, typename ET::reference>;
     using const_reference = typename ET::const_reference;
     using difference_type = typename ET::difference_type;
     using size_type = typename ET::size_type;

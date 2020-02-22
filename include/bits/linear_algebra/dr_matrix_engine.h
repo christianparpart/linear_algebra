@@ -16,6 +16,7 @@
 
 #include "base.h"
 
+#include <cassert>
 #include <vector>
 #include <tuple>
 #include <type_traits>
@@ -47,18 +48,25 @@ class dr_matrix_engine
     dr_matrix_engine() = default;
     dr_matrix_engine(dr_matrix_engine&& rhs) noexcept = default;
     dr_matrix_engine(dr_matrix_engine const& rhs) = default;
-    dr_matrix_engine(size_type rows, size_type cols);
-    dr_matrix_engine(size_type rows, size_type cols, size_type rowcap, size_type colcap);
+    dr_matrix_engine(size_type rows, size_type cols) : dr_matrix_engine(rows, rows, cols, cols) {}
+    dr_matrix_engine(size_type rows, size_type cols, size_type rowcap, size_type colcap)
+    {
+        assert(rows <= rowcap && cols <= colcap);
+
+        rows_ = rows;
+        columns_ = cols;
+        row_capacity_ = rowcap;
+        column_capacity_ = colcap;
+
+        elements_.resize(rowcap * colcap);
+    }
     dr_matrix_engine& operator=(dr_matrix_engine&&) noexcept = default;
     dr_matrix_engine& operator=(dr_matrix_engine const&) = default;
     template<class ET2>
     dr_matrix_engine& operator=(ET2 const& rhs)
     {
-        using detail::times;
-        reserve(rhs.row_capacity(), rhs.column_capacity());
-        resize(rhs.rows(), rhs.columns());
-        for (auto [i, j] : times(rhs.rows()) * times(rhs.columns()))
-            (*this)(i, j) = rhs(i, j);
+        dr_matrix_engine clone(rhs);
+        clone.swap(*this);
         return *this;
     }
 
@@ -72,17 +80,19 @@ class dr_matrix_engine
     size_tuple capacity() const noexcept { return {row_capacity(), column_capacity()}; }
     void reserve(size_type rowcap, size_type colcap)
     {
-        elements_.reserve(rowcap * colcap);
-        row_capacity_ = rowcap;
-        column_capacity_ = colcap;
-        // TODO: preserve values
+        using detail::times;
+        dr_matrix_engine resized(rows(), columns(), rowcap, colcap);
+        for (auto [i, j] : times(rows()) * times(columns()))
+            resized(i, j) = (*this)(i, j);
+        std::swap(resized, *this);
     }
     void resize(size_type rows, size_type cols)
     {
-        elements_.resize(rows * cols);
+        if (rows > row_capacity_ || cols > column_capacity_)
+            reserve(rows, cols);
+
         rows_ = rows;
         columns_ = cols;
-        // TODO: preserve values that are not cut off
     }
     void resize(size_type rows, size_type cols, size_type rowcap, size_type colcap)
     {

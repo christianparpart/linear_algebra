@@ -32,6 +32,11 @@
 * From a Math point of view, you name a matrix like M_{m,n}(F) so it would be natural
   to say `matrix<M, N, F>` instead of `matrix<F, M, N>`. Why the other way around?
 * Why no expression templates?
+* implementing recursive `det(A)` (Laplace expansion) seems impossible with current design.
+    Maybe have a submatrix_engine specialization that knows about ri/cn/ci/cn at compile time (templ args)?
+* I think it makes sense to have a `fs_matrix` that can be resized up to given compile-time
+    capacity. There `rowcap` and `colcap` could default to `R` and `C` respectively.
+  In other words, an `fs_matrix` should be able to shrink/resize between 0 (or 1) and `R`/`C`.
 
 ## THOUGHTS
 * What about bigint/bigrational/symexpr numeric types? (seperate paper/proposal)

@@ -81,8 +81,11 @@ class matrix {
     constexpr matrix(matrix<ET2, OT2> const& src)
     {
         using detail::times;
-        engine_.reserve(src.row_capacity(), src.column_capacity());
-        engine_.resize(src.rows(), src.columns());
+        if constexpr (is_resizable)
+        {
+            engine_.reserve(src.row_capacity(), src.column_capacity());
+            engine_.resize(src.rows(), src.columns());
+        }
         for (auto [i, j] : times(rows()) * times(columns()))
             (*this)(i, j) = src(i, j);
     }

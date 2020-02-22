@@ -8,8 +8,10 @@
 
 ## PROPOSAL
 
-* [x] `dr_vector_engine`
-* [ ] `dr_matrix_engine`
+* [ ] `matrix.t()` (tranpose matrix)
+* [ ] `matrix.h()` (hermitian matrix)
+* [ ] `vector` reverse iterators
+* [ ] `vector` free function `begin()`/`end()`
 * [ ] ensure proper engine promotion (fs op dr -> dr; dr op fs -> dr)
 * [ ] ensure proper trait promotion (std op custom -> custom, and vice versa)
 
@@ -25,8 +27,8 @@
 * [ ] `cofactor(A, i, j)`
 * [ ] `adjugate(A)`
 * [x] `det(A)`, fixed-size matrix, with optimizations for 1x1, 2x2, 3x3
-* [ ] `det(A)`, dynamic-size matrix, with optimizations for 1x1, 2x2, 3x3
-* [ ] `det(A)`, Laplace for N >= 4
+* [x] `det(A)`, dynamic-size matrix, with optimizations for 1x1, 2x2, 3x3
+* [x] `det(A)`, Laplace for N >= 4
 * [ ] `det(A)`, Leibnitz algorithm
 * [ ] `inverse(A)`
 * [ ] `solve(A)`

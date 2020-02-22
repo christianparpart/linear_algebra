@@ -15,6 +15,7 @@
 #pragma once
 
 #include "base.h"
+#include "dr_vector_engine.h"
 
 #include <iterator>
 
@@ -42,8 +43,12 @@ class vector {
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     using transpose_type = vector&;
     using const_transpose_type = vector const&;
-    using hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, vector, transpose_type>;
-    using const_hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, vector, const_transpose_type>;
+    using hermitian_type = std::conditional_t<detail::is_complex_v<element_type>,
+        vector&,
+        vector<dr_vector_engine<std::complex<element_type>>, OT>
+        // TODO: better way to transform ET to use another element type (here: complex<T>)
+    >;
+    using const_hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, vector const&, vector>;
 
     //- Construct/copy/destroy
     //
@@ -123,25 +128,17 @@ class vector {
     constexpr const_transpose_type t() const { return *this; }
     constexpr hermitian_type h()
     {
-        auto ht = hermitian_type(size());
-        size_t i = 0;
-        for (auto && v : *this)
-        {
-            ht(i) = (*this)(i);
-            ++i;
-        }
-        return ht;
+        if constexpr (detail::is_complex_v<element_type>)
+            return *this;
+        else
+            return hermitian_type(*this);
     }
     constexpr const_hermitian_type h() const
     {
-        auto ht = hermitian_type(size());
-        size_t i = 0;
-        for (auto && v : *this)
-        {
-            ht(i) = (*this)(i);
-            ++i;
-        }
-        return ht;
+        if constexpr (detail::is_complex_v<element_type>)
+            return *this;
+        else
+            return hermitian_type(*this);
     }
 
     //- Data access

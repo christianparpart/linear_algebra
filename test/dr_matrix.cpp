@@ -37,6 +37,46 @@ TEST_CASE("dr_matrix.ctor")
     }
 }
 
+TEST_CASE("dr_matrix.resize")
+{
+    auto const m1 = dmat<int>(imat<3, 4>{1, 2, 3, 4,
+                                         2, 3, 4, 5,
+                                         3, 4, 5, 6});
+
+    SECTION("smaller 1")
+    {
+        auto m2 = m1;
+        m2.resize(2, 3);
+        CHECK(m2 == imat<2, 3>{1, 2, 3, 2, 3, 4});
+    }
+
+    SECTION("smaller 2")
+    {
+        auto m2 = m1;
+        m2.resize(2, 1);
+        auto const me = imat<2, 1>{1, 2};
+        if (!(m2 == me))
+            printf("oops\n");
+        CHECK(m2 == imat<2, 1>{1, 2});
+    }
+
+    SECTION("smaller 3")
+    {
+        auto m2 = m1;
+        m2.resize(1, 1);
+        CHECK(m2 == imat<1, 1>{1});
+    }
+
+    SECTION("bigger 1") {
+        auto m2 = m1;
+        m2.resize(4, 5);
+        auto const me = dmat<int>(imat<4, 5>{1, 2, 3, 4, 0,
+                                             2, 3, 4, 5, 0,
+                                             3, 4, 5, 6, 0,
+                                             0, 0, 0, 0, 0});
+        CHECK(m2 == me);
+    }
+}
 
 TEST_CASE("dr_matrix.row")
 {

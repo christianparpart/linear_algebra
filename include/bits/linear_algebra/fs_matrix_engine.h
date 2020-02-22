@@ -33,9 +33,6 @@ class fs_matrix_engine : public matrix_engine<fs_matrix_engine<T, R, C>, writabl
     static_assert(R >= 1 && C >= 1, "Row and column count must be at least one.");
     static_assert(is_matrix_element_v<T>, "Element type must be an arithmetic field type.");
 
-  private:
-    std::array<T, R * C> values_{};
-
   public:
     //- Types
     //
@@ -85,7 +82,7 @@ class fs_matrix_engine : public matrix_engine<fs_matrix_engine<T, R, C>, writabl
     //
     constexpr size_type columns() const noexcept { return C; }
     constexpr size_type rows() const noexcept { return R; }
-    constexpr size_tuple size() const noexcept { return {R, C}; }
+    constexpr size_tuple size() const noexcept { return {rows(), columns()}; }
     constexpr size_type column_capacity() const noexcept { return C; }
     constexpr size_type row_capacity() const noexcept { return R; }
     constexpr size_tuple capacity() const noexcept { return {R, C}; }
@@ -94,15 +91,11 @@ class fs_matrix_engine : public matrix_engine<fs_matrix_engine<T, R, C>, writabl
     //
     constexpr reference operator()(size_type i, size_type j)
     {
-        // assert(i < R);
-        // assert(j < C);
         return values_[i * column_capacity() + j];
     }
 
     constexpr const_reference operator()(size_type i, size_type j) const
     {
-        // assert(i < R);
-        // assert(j < C);
         return values_[i * column_capacity() + j];
     }
 
@@ -123,6 +116,9 @@ class fs_matrix_engine : public matrix_engine<fs_matrix_engine<T, R, C>, writabl
         for (size_type j : times(columns()))
             std::swap((*this)(i1, j), (*this)(i2, j));
     }
+
+  private:
+    std::array<T, R * C> values_{};
 };
 
 } // end namespace
