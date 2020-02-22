@@ -21,7 +21,8 @@ jobs:
           set -ex
           cat /etc/apt/sources.list
           sudo apt -q update
-          sudo apt install -y "g++-9"
+          sudo apt install -y "g++-9" python-pip
+          sudo pip install codecov
       - name: "create build directory"
         run: mkdir build
       - name: "cmake"
@@ -32,6 +33,8 @@ jobs:
         run: cmake --build build/ -- -j3
       - name: "test"
         run: ./build/test_linear_algebra
+      - name: "codecov"
+        run: codecov --flags all --gcov-glob '*/linear_algebra/*'
   build_clang:
     runs-on: ubuntu-latest
     steps:

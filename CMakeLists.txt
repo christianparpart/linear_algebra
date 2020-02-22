@@ -12,6 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ${MASTER_PROJECT})
 option(LINEAR_ALGEBRA_TESTING "linear_algebra: enables building of unit tests (requires catch2) [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
 option(LINEAR_ALGEBRA_EMBEDDED_CATCH2 "linear_algebra: uses embedded catch2 for testing [default: ${MASTER_PROJECT}]" ${MASTER_PROJECT})
 option(LINEAR_ALGEBRA_EMBEDDED_FMTLIB "linear_algebra: uses embedded fmtlib [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
+option(LINEAR_ALGEBRA_COVERAGE "linear_algebra: Builds with codecov [default: ${MASTER_PROJECT}]" ${MASTER_PROJECT})
 
 # setting defaults
 if (NOT("${CMAKE_CXX_STANDARD}"))
@@ -38,6 +39,14 @@ if(LINEAR_ALGEBRA_ENABLE_TIDY)
         message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
         set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
     endif()
+endif()
+
+if(LINEAR_ALGEBRA_COVERAGE AND NOT MSVC)
+    add_compile_options(-g --coverage)
+    set(CMAKE_EXE_LINKER_FLAGS "--coverage ${CMAKE_EXE_LINKER_FLAGS}")
+    message("-- [code coverage] Enabled.")
+else()
+    message("-- [code coverage] Disabled.")
 endif()
 
 # ----------------------------------------------------------------------------
