@@ -1,11 +1,3 @@
-## PROJECT
-
-* [ ] GitHub Actions CI: GCC 9 / Ubuntu latest
-* [ ] GitHub Actions CI: Clang 9 / Ubuntu latest
-* [ ] GitHub Actions CI: Clang / OSX
-* [ ] GitHub Actions CI: MSVC / Windows
-* [ ] tests: custom operation_traits
-
 ## PROPOSAL
 
 * [ ] `matrix.t()` (tranpose matrix)

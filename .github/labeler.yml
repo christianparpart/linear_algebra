@@ -1,0 +1,5 @@
+"linear algebra":
+  - include/**
+"test":
+  - test/*.cpp
+  - test/*.h
