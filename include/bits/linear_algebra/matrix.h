@@ -178,8 +178,14 @@ class matrix {
     constexpr const_submatrix_type submatrix(size_type r, size_type c) const noexcept { // EXT
         return submatrix(r, 1, c, 1);
     }
-    constexpr transpose_type t() noexcept; // TODO
-    constexpr const_transpose_type t() const noexcept; // TODO
+    constexpr transpose_type t() noexcept
+    {
+        return transpose_type(typename transpose_type::engine_type(&engine_));
+    }
+    constexpr const_transpose_type t() const noexcept
+    {
+        return const_transpose_type(typename const_transpose_type::engine_type(const_cast<ET*>(&engine_)));
+    }
     constexpr hermitian_type h(); // TODO
     constexpr const_hermitian_type h() const; // TODO
 

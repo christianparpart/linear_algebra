@@ -20,7 +20,10 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 
 // 6.4.7 | class transpose_engine<ET, MCT>
 template <class ET, class MCT>
-class transpose_engine {
+class transpose_engine : public matrix_engine<transpose_engine<ET, MCT>, MCT> {
+  private:
+    ET* engine_{};
+
   public:
     //- Types
     //
@@ -38,28 +41,37 @@ class transpose_engine {
     //- Construct/copy/destroy
     //
     ~transpose_engine() noexcept = default;
-    constexpr transpose_engine();
+    constexpr transpose_engine() = default;
     constexpr transpose_engine(transpose_engine&&) noexcept = default;
     constexpr transpose_engine(transpose_engine const&) = default;
     constexpr transpose_engine& operator=(transpose_engine&&) noexcept = default;
     constexpr transpose_engine& operator=(transpose_engine const&) = default;
 
+    // EXT
+    constexpr explicit transpose_engine(ET* e) : engine_{e} {}
+
     //- Capacity
     //
-    constexpr size_type columns() const noexcept;
-    constexpr size_type rows() const noexcept;
-    constexpr size_tuple size() const noexcept;
-    constexpr size_type column_capacity() const noexcept;
-    constexpr size_type row_capacity() const noexcept;
-    constexpr size_tuple capacity() const noexcept;
+    constexpr size_type columns() const noexcept { return engine_->rows(); }
+    constexpr size_type rows() const noexcept { return engine_->columns(); }
+    constexpr size_tuple size() const noexcept{ return {rows(), columns()}; }
+    constexpr size_type column_capacity() const noexcept { return columns(); }
+    constexpr size_type row_capacity() const noexcept { return rows(); }
+    constexpr size_tuple capacity() const noexcept { return {row_capacity(), column_capacity()}; }
 
     //- Element access
     //
-    constexpr reference operator()(size_type i, size_type j) const;
+    constexpr reference operator()(size_type i, size_type j) const
+    {
+        return (*engine_)(j, i);
+    }
 
     //- Modifiers
     //
-    constexpr void swap(transpose_engine& rhs);
+    constexpr void swap(transpose_engine& rhs)
+    {
+        std::swap(engine_, rhs.engine_);
+    }
 };
 
 } // end namespace

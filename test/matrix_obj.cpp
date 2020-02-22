@@ -144,3 +144,18 @@ TEST_CASE("ext.det")
     //     REQUIRE(d == -10);
     // }
 }
+
+TEST_CASE("matrix.transpose")
+{
+    auto static constexpr m1 = imat<3, 4>{0, 1, 2, 3,
+                                          4, 5, 6, 7,
+                                          8, 9, 10, 11};
+
+    auto static constexpr me = imat<4, 3>{0, 4, 8,
+                                          1, 5, 9,
+                                          2, 6, 10,
+                                          3, 7, 11};
+
+    auto constexpr m2 = m1.t();
+    CHECK(m2 == me);
+}
