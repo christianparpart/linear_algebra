@@ -56,7 +56,7 @@ constexpr bool operator!=(matrix<ET1, OT1> const& m1, matrix<ET2, OT2> const& m2
 }
 
 template <typename ET, typename OT>
-std::ostream& operator<<(std::ostream& os, vector<ET, OT>const& _vec)
+inline std::ostream& operator<<(std::ostream& os, vector<ET, OT>const& _vec)
 {
     using detail::times;
     os << '(';
@@ -67,7 +67,7 @@ std::ostream& operator<<(std::ostream& os, vector<ET, OT>const& _vec)
 }
 
 template <typename ET, typename OT>
-std::ostream& operator<<(std::ostream& os, matrix<ET, OT> const& _mat)
+inline std::ostream& operator<<(std::ostream& os, matrix<ET, OT> const& _mat)
 {
     using detail::times;
     os << '{';

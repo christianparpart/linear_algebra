@@ -18,22 +18,80 @@
 
 #include <catch2/catch.hpp>
 
-TEST_CASE("vector.fs")
+TEST_CASE("vector.ctor")
 {
-    SECTION("ctor") {
-        auto CONSTEXPR v = ivec<3>{2, 4, 8};
-        REQUIRE(v.size() == 3);
-        REQUIRE(v.elements() == 3);
-        REQUIRE(v.capacity() == 3);
+    auto CONSTEXPR v = ivec<3>{2, 4, 8};
+    REQUIRE(v.size() == 3);
+    REQUIRE(v.elements() == 3);
+    REQUIRE(v.capacity() == 3);
 
-        // operator[]
-        CHECK(v[0] == 2);
-        CHECK(v[1] == 4);
-        CHECK(v[2] == 8);
+    // operator[]
+    CHECK(v[0] == 2);
+    CHECK(v[1] == 4);
+    CHECK(v[2] == 8);
 
-        // operator()
-        CHECK(v(0) == 2);
-        CHECK(v(1) == 4);
-        CHECK(v(2) == 8);
-    }
+    // operator()
+    CHECK(v(0) == 2);
+    CHECK(v(1) == 4);
+    CHECK(v(2) == 8);
+}
+
+TEST_CASE("vector.iterator")
+{
+    auto v = ivec<3>{2, 4, 8};
+    auto i = v.begin();
+    auto e = v.end();
+    REQUIRE(*i == 2);
+    i++;
+    REQUIRE(*i == 4);
+    i++;
+    REQUIRE(*i == 8);
+    i++;
+    auto const iterationFinished = i == e;
+    REQUIRE(iterationFinished != false);
+}
+
+TEST_CASE("vector.const_iterator")
+{
+    auto CONSTEXPR v = ivec<3>{2, 4, 8};
+    auto i = v.cbegin();
+    auto e = v.cend();
+    REQUIRE(*i == 2);
+    i++;
+    REQUIRE(*i == 4);
+    i++;
+    REQUIRE(*i == 8);
+    i++;
+    auto const iterationFinished = i == e;
+    REQUIRE(iterationFinished != false);
+}
+
+TEST_CASE("vector.reverse_iterator")
+{
+    auto v = ivec<3>{2, 4, 8};
+    auto i = v.rbegin();
+    auto e = v.rend();
+    REQUIRE(*i == 8);
+    i++;
+    REQUIRE(*i == 4);
+    i++;
+    REQUIRE(*i == 2);
+    i++;
+    auto const iterationFinished = i == e;
+    REQUIRE(iterationFinished != false);
+}
+
+TEST_CASE("vector.const_reverse_iterator")
+{
+    auto CONSTEXPR v = ivec<3>{2, 4, 8};
+    auto i = v.crbegin();
+    auto e = v.crend();
+    REQUIRE(*i == 8);
+    i++;
+    REQUIRE(*i == 4);
+    i++;
+    REQUIRE(*i == 2);
+    i++;
+    auto const iterationFinished = i == e;
+    REQUIRE(iterationFinished != false);
 }

@@ -85,14 +85,14 @@ class vector {
     constexpr const_iterator begin() const noexcept { return engine_.begin(); }
     constexpr iterator end() noexcept { return engine_.end(); }
     constexpr const_iterator end() const noexcept { return engine_.end(); }
-    // TODO constexpr reverse_iterator rbegin() noexcept;
-    // TODO constexpr const_reverse_iterator rbegin() const noexcept;
-    // TODO constexpr reverse_iterator rend() noexcept;
-    // TODO constexpr const_reverse_iterator rend() const noexcept;
+    constexpr reverse_iterator rbegin() noexcept { return reverse_iterator(end()); }
+    constexpr const_reverse_iterator rbegin() const noexcept { return const_reverse_iterator(end()); }
+    constexpr reverse_iterator rend() noexcept { return reverse_iterator(begin()); }
+    constexpr const_reverse_iterator rend() const noexcept { return const_reverse_iterator(begin()); }
     constexpr const_iterator cbegin() const noexcept { return engine_.cbegin(); }
     constexpr const_iterator cend() const noexcept { return engine_.cend(); }
-    // TODO constexpr const_reverse_iterator crbegin() const noexcept;
-    // TODO constexpr const_reverse_iterator crend() const noexcept;
+    constexpr const_reverse_iterator crbegin() const noexcept { return rbegin(); }
+    constexpr const_reverse_iterator crend() const noexcept { return rend(); }
 
     //- Capacity
     //

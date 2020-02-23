@@ -1,11 +1,9 @@
 ## PROPOSAL
 
-* [ ] `vector` reverse iterators
-* [ ] `vector` free function `begin()`/`end()`
 * [ ] ensure proper engine promotion (fs op dr -> dr; dr op fs -> dr)
 * [ ] ensure proper trait promotion (std op custom -> custom, and vice versa)
 * [ ] `matrix.h()` (hermitian matrix)
-* [x] `matrix.t()` (tranpose matrix)
+* [ ] `vector.h()` (hermitian matrix)
 
 ## EXTS
 
@@ -26,6 +24,8 @@
 * [ ] `solve(A)`
 * [ ] `solve_traced(A)`
 * [ ] `kronecker_delta(i, j)`
+* [ ] function for computing eigen values
+* [ ] function to compute eigen vectors
 
 ## Documentation
 
