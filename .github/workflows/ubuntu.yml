@@ -75,7 +75,7 @@ jobs:
         run: |
           cd build && cmake .. \
             -DLINEAR_ALGEBRA_COVERAGE=ON \
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_CXX_COMPILER=g++-9
+            -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-9
       - name: "build"
         run: cmake --build build/ -- -j3
       - name: "test"

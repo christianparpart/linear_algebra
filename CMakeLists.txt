@@ -123,6 +123,7 @@ if(LINEAR_ALGEBRA_TESTING)
         test/mul.cpp
         test/matrix_obj.cpp
         test/vector.cpp
+        test/ext.cpp
     )
     target_link_libraries(test_linear_algebra linear_algebra fmt::fmt-header-only Catch2::Catch2)
     add_test(test_linear_algebra ./test_linear_algebra)

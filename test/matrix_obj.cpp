@@ -114,37 +114,6 @@ TEST_CASE("matrix.submatrix")
     }
 }
 
-TEST_CASE("ext.det")
-{
-    SECTION("fs.1x1") {
-        auto static CONSTEXPR m1 = imat<1, 1>{42};
-        REQUIRE(det(m1) == 42);
-    }
-
-    SECTION("fs.2x2") {
-        auto static CONSTEXPR m1 = imat<2, 2>{1, 2,
-                                              3, 4};
-        REQUIRE(det(m1) == -2);
-    }
-
-    SECTION("fs.3x3") {
-        auto CONSTEXPR a = imat<3, 3>{3, 5, 1,
-                                      1, 4, 2,
-                                      7, 1, 9};
-        auto CONSTEXPR d = det(a);
-        REQUIRE(d == 100);
-    }
-
-    // SECTION("fs.4x4") {
-    //     auto CONSTEXPR a = imat<4, 4>{4, 3, 2, 2,
-    //                                   0, 1, 0,-2,
-    //                                   1,-1, 0, 3,
-    //                                   2, 3, 0, 1};
-    //     auto CONSTEXPR d = det(a);
-    //     REQUIRE(d == -10);
-    // }
-}
-
 TEST_CASE("matrix.transpose")
 {
     auto static CONSTEXPR m1 = imat<3, 4>{0, 1, 2, 3,
@@ -157,5 +126,7 @@ TEST_CASE("matrix.transpose")
                                           3, 7, 11};
 
     auto CONSTEXPR m2 = m1.t();
+    CHECK(m2.rows() == 4);
+    CHECK(m2.columns() == 3);
     CHECK(m2 == me);
 }
