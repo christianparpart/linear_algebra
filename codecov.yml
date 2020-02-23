@@ -1,5 +1,4 @@
 codecov:
-  token: c34bde84-789c-46b3-a8e7-7e0dac2ea6b6
   notify:
     require_ci_to_pass: yes
 
@@ -12,11 +11,6 @@ coverage:
     project: yes
     patch: yes
     changes: no
-
-  ignore:
-    - build/**
-    - test/**
-    - 3rdparty/**
 
 parsers:
   gcov:

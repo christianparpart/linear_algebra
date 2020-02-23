@@ -68,8 +68,7 @@ jobs:
           set -ex
           cat /etc/apt/sources.list
           sudo apt -q update
-          sudo apt install -y "g++-9" python-pip
-          sudo pip install codecov
+          sudo apt install -y "g++-9"
       - name: "create build directory"
         run: mkdir build
       - name: "cmake"
@@ -81,5 +80,10 @@ jobs:
         run: cmake --build build/ -- -j3
       - name: "test"
         run: ./build/test_linear_algebra
-      - name: "codecov"
-        run: codecov --flags all
+      - name: "Codecov"
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          set -ex
+          curl -s https://codecov.io/bash >codecov.sh
+          bash codecov.sh -x "gcov-9" -n codecov-umbrella -Z -y ./codecov.yml -X coveragepy
