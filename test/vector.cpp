@@ -23,9 +23,17 @@ TEST_CASE("vector.fs")
     SECTION("ctor") {
         auto CONSTEXPR v = ivec<3>{2, 4, 8};
         REQUIRE(v.size() == 3);
+        REQUIRE(v.elements() == 3);
         REQUIRE(v.capacity() == 3);
+
+        // operator[]
         CHECK(v[0] == 2);
         CHECK(v[1] == 4);
         CHECK(v[2] == 8);
+
+        // operator()
+        CHECK(v(0) == 2);
+        CHECK(v(1) == 4);
+        CHECK(v(2) == 8);
     }
 }

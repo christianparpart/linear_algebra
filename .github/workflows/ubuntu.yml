@@ -82,4 +82,4 @@ jobs:
       - name: "test"
         run: ./build/test_linear_algebra
       - name: "codecov"
-        run: codecov --flags all --gcov-glob '*_test.cpp' 'build/*'
+        run: codecov --flags all

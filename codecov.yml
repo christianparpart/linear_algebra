@@ -14,8 +14,9 @@ coverage:
     changes: no
 
   ignore:
-    - test/*_test.cpp
-    - 3rdparty/*
+    - build/**
+    - test/**
+    - 3rdparty/**
 
 parsers:
   gcov:
