@@ -31,9 +31,9 @@ constexpr T kronecker_delta(std::size_t i, std::size_t j, T v = 1)
 }
 
 template <typename ET, typename OT>
-constexpr auto trace(matrix<ET, OT> const& m) -> typename ET::element_type
+constexpr auto trace(matrix<ET, OT> const& m) -> typename ET::value_type
 {
-    typename ET::element_type v{};
+    typename ET::value_type v{};
     using detail::times;
     for (auto ij : times(std::min(m.rows(), m.columns())))
         v += m(ij, ij);

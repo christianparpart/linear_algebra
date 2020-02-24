@@ -37,6 +37,7 @@
 * I think it makes sense to have a `fs_matrix` that can be resized up to given compile-time
     capacity. There `rowcap` and `colcap` could default to `R` and `C` respectively.
   In other words, an `fs_matrix` should be able to shrink/resize between 0 (or 1) and `R`/`C`.
+* template parameter `OT` in vector and matrix should default to `matrix_operation_traits`.
 
 ## THOUGHTS
 * What about bigint/bigrational/symexpr numeric types? (seperate paper/proposal)
