@@ -65,39 +65,4 @@ struct matrix_operation_traits
     using multiplication_traits = matrix_multiplication_traits<OTR, OP1, OP2>;
 };
 
-// ---------------------------------------------------------------------------
-// 6.6.2 | matrix_operation_traits_selector
-// Primary template and expected specializations.
-
-template <class T1, class T2>
-struct matrix_operation_traits_selector;
-
-template <class T1>
-struct matrix_operation_traits_selector<T1, T1>
-{
-    using traits_type = T1;
-};
-
-template <class T1>
-struct matrix_operation_traits_selector<T1, matrix_operation_traits>
-{
-    using traits_type = T1;
-};
-
-template <class T1>
-struct matrix_operation_traits_selector<matrix_operation_traits, T1>
-{
-    using traits_type = T1;
-};
-
-template <>
-struct matrix_operation_traits_selector<matrix_operation_traits, matrix_operation_traits>
-{
-    using traits_type = matrix_operation_traits;
-};
-
-//- Convenience alias.
-template <class T1, class T2>
-using matrix_operation_traits_selector_t = typename matrix_operation_traits_selector<T1, T2>::traits_type;
-
 } // end namespace

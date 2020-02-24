@@ -34,6 +34,11 @@ TEST_CASE("custom_engine.create")
     CHECK(m1.engine().elements() == 3);
 }
 
+TEST_CASE("custom_engine.neg")
+{
+    // TODO
+}
+
 TEST_CASE("custom_engine.add")
 {
     sparse_mat<int> const m1 = imat<2, 3>{1, 0, 2,
@@ -46,4 +51,33 @@ TEST_CASE("custom_engine.add")
     static_assert(std::is_same_v<decltype(m1), decltype(sum)>);
     CHECK(sum == me);
     CHECK(sum.engine().elements() == 2);
+}
+
+TEST_CASE("custom_engine.sub")
+{
+    sparse_mat<int> const m1 = imat<2, 3>{1, 0, 2,
+                                          0, 1, 0};
+    auto static CONSTEXPR m2 = imat<2, 3>{1, -2, 2,
+                                          -4, 1, 0};
+
+    // AB
+    auto static CONSTEXPR me = imat<2, 3>{0, 2, 0,
+                                          4, 0, 0};
+    auto const sub1 = m1 - m2;
+    static_assert(std::is_same_v<decltype(m1), decltype(sub1)>);
+    CHECK(sub1.engine().elements() == 2);
+    CHECK(sub1 == me);
+
+    // BA
+    auto static CONSTEXPR me2 = imat<2, 3>{0, -2, 0,
+                                           -4, 0, 0};
+    auto const sub2 = m2 - m1;
+    // TODO: static_assert(std::is_same_v<decltype(m1), decltype(sub2)>);
+    // TODO: CHECK(sub2.engine().elements() == 2);
+    CHECK(sub2 == me2);
+}
+
+TEST_CASE("custom_engine.mul")
+{
+    // TODO
 }

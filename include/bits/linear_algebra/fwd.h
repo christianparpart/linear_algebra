@@ -30,4 +30,6 @@ template <typename ET, typename OT> class column_engine;
 template <typename ET, typename OT> class transpose_engine;
 template <typename ET, typename OT> class submatrix_engine;
 
+struct matrix_operation_traits;
+
 } // end namespace

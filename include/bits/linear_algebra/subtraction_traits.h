@@ -16,6 +16,7 @@
 
 #include "base.h"
 #include "fwd.h"
+#include "operation_traits_selector.h"
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
@@ -35,6 +36,7 @@ template <class OT, class ET1, class ET2>
 struct matrix_subtraction_engine_traits
 {
     using element_type = matrix_subtraction_element_t<OT, typename ET1::element_type, typename ET2::element_type>;
+    // using engine_type = matrix_operation_traits_selector_t<ET1, ET2>;
     using engine_type = ET1; // TODO
 };
 
@@ -59,6 +61,10 @@ struct matrix_subtraction_traits<OT, vector<ET1, OT1>, vector<ET2, OT2>>
     constexpr static result_type subtract(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2)
     {
         result_type v3{};
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            v3.resize(v1.size());
+
         for (decltype(v1.size()) i = 0; i < v1.size(); ++i)
             v3(i) = v1(i) - v2(i);
         return v3;
@@ -75,6 +81,9 @@ struct matrix_subtraction_traits<OT, matrix<ET1, OT1>, matrix<ET2, OT2>>
     {
         using size_type = std::size_t;
         result_type m{};
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            m.resize(m1.rows(), m1.columns());
 
         for (size_type i = 0; i < m1.rows(); ++i)
             for (size_type j = 0; j < m1.columns(); ++j)
