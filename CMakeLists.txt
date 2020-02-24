@@ -124,6 +124,7 @@ if(LINEAR_ALGEBRA_TESTING)
         test/matrix_obj.cpp
         test/vector.cpp
         test/custom_number.cpp
+        test/custom_engine.cpp
         test/ext.cpp
     )
     target_link_libraries(test_linear_algebra linear_algebra fmt::fmt-header-only Catch2::Catch2)
