@@ -59,8 +59,13 @@ struct matrix_addition_traits<OT, vector<ET1, OT1>, vector<ET2, OT2>>
     constexpr static result_type add(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2)
     {
         result_type v3{};
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            v3.resize(v1.size());
+
         for (std::size_t i = 0; i < v1.size(); ++i)
             v3(i) = v1(i) + v2(i);
+
         return v3;
     }
 };
@@ -75,6 +80,9 @@ struct matrix_addition_traits<OT, matrix<ET1, OT1>, matrix<ET2, OT2>>
     {
         using size_type = std::size_t;
         result_type m{};
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            m.resize(m1.rows(), m1.columns());
 
         for (size_type i = 0; i < m1.rows(); ++i)
             for (size_type j = 0; j < m1.columns(); ++j)
