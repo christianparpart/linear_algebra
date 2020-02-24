@@ -121,6 +121,22 @@ class matrix {
             (*this)(i, j) = _init(i, j);
     }
 
+    // EXT
+    template<
+        typename Initializer,
+        typename std::enable_if_t<
+            std::is_invocable_r_v<value_type, Initializer, size_type, size_type>,
+            int> = 0
+    >
+    constexpr matrix(size_type rows, size_type cols, Initializer const& _init) noexcept
+        LA_CONCEPT(is_resizable)
+        : matrix(rows, cols)
+    {
+        using detail::times;
+        for (auto [i, j] : times(rows) * times(cols))
+            (*this)(i, j) = _init(i, j);
+    }
+
     constexpr matrix& operator=(matrix&&) noexcept = default;
     constexpr matrix& operator=(matrix const&) = default;
 

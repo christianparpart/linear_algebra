@@ -1,3 +1,17 @@
+/**
+ * This file is part of the "dim" project
+ *   Copyright (c) 2020 Christian Parpart <christian@parpart.family>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #pragma once
 
 #include "base.h"
@@ -6,6 +20,8 @@
 #include "dr_matrix_engine.h"
 #include "support.h"
 #include "concepts.h"
+
+#include <cassert>
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
@@ -71,27 +87,32 @@ namespace detail { // {{{
     }
 } // }}}
 
-template <typename T, typename AT, typename OT>
-constexpr auto det(matrix<dr_matrix_engine<T, AT>, OT> const& m) // -> typename matrix<ET, OT>::value_type
+//template <typename T, typename AT, typename OT>
+//constexpr auto det(matrix<dr_matrix_engine<T, AT>, OT> const& m) // -> typename matrix<ET, OT>::value_type
+template <typename ET, typename OT>
+constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value_type
 {
     using detail::times;
     using detail::reduce;
-    using value_type = typename matrix<dr_matrix_engine<T, AT>, OT>::value_type;
+    using value_type = typename matrix<ET, OT>::value_type;
 
     if (m.rows() != m.columns())
         return value_type{};
+    else if (m.rows() == 3)
+        return m(0, 0) * m(1, 1) * m(2, 2)
+             + m(1, 0) * m(2, 1) * m(0, 2)
+             + m(2, 0) * m(0, 1) * m(1, 2)
+             - m(2, 0) * m(1, 1) * m(0, 2)
+             - m(2, 1) * m(1, 2) * m(0, 0)
+             - m(2, 2) * m(1, 0) * m(0, 1);
+    else if (m.rows() == 2)
+        return m(0, 0) * m(1, 1)
+             - m(1, 0) * m(0, 1);
+    else if (m.rows() == 1)
+        return m(0, 0);
     else
-        // return value_type{};
-        return reduce(
-            times(m.columns()),
-            0,
-            [&](auto acc, auto j) constexpr {
-                std::size_t const i = 0;
-                return (i + j) % 2 == 0
-                    ? acc + m(i, j) * det(m.submatrix(i, j))
-                    : acc - m(i, j) * det(m.submatrix(i, j));
-            }
-        );
+        return m(0, 0); // TODO: det(A), Leibniz
+
 }
 
 template <class OT, class T, std::size_t R, std::size_t C>
@@ -149,6 +170,64 @@ template <class OT, class T> constexpr T det(matrix<fs_matrix_engine<T, 3, 3>, O
          - m(2, 0) * m(1, 1) * m(0, 2)
          - m(2, 1) * m(1, 2) * m(0, 0)
          - m(2, 2) * m(1, 0) * m(0, 1);
+}
+
+/// Tests whether or not given matrix is invertible.
+template <typename ET, typename OT>
+constexpr bool is_invertible(matrix<ET, OT> const& m)
+{
+    auto const zero = typename ET::value_type{};
+    return det(m) != zero;
+}
+
+/// Computes the cofactor of a square matrix m at given position (i, j).
+template <typename ET, typename OT, typename size_type = typename ET::size_type>
+constexpr auto cofactor(matrix<ET, OT> const& m, size_type i, size_type j) -> typename ET::value_type
+{
+    return (i + j) % 2 == 0 ? +det(m.submatrix(i, j))
+                            : -det(m.submatrix(i, j));
+}
+
+/// Compute the cofactor matrix of a square matrix.
+template <typename ET, typename OT>
+constexpr matrix<ET, OT> cofactor(matrix<ET, OT> const& m)
+{
+    return matrix<ET, OT>(m.rows(), m.columns(), [&](auto i, auto j) { return cofactor(m, i, j); });
+}
+
+/// Compute the cofactor matrix of a square matrix.
+template <typename ET, typename OT>
+constexpr matrix<ET, OT> adjugate(matrix<ET, OT> const& m)
+{
+    //return cofactor(m).t();
+    if constexpr (is_resizable_engine_v<ET>)
+    {
+        assert(m.rows() == m.columns());
+        return matrix<ET, OT>(m.columns(), m.rows(), [&](auto i, auto j) { return cofactor(m, j, i); });
+    }
+    else
+    {
+        // TODO: find a way so that OS/X's Clang is not complaining in the static_assert below.
+        // static_assert(m.rows() == m.columns());
+        return matrix<ET, OT>([&](auto i, auto j) { return cofactor(m, j, i); });
+    }
+}
+
+/// Computes the inverse matrix of a square matrix.
+template <typename ET, typename OT>
+constexpr auto inverse(matrix<ET, OT> const& m)
+{
+    // TODO
+    // if constexpr (is_fixed_size_engine_v<ET>)
+    //     static_assert(is_invertible(m));
+
+    auto const zero = typename ET::value_type{};
+    auto const detM = det(m);
+    if (detM == zero)
+        throw std::domain_error{"Given matrix is not invertible."};
+
+    auto const one = typename ET::value_type(1);
+    return one / detM * adjugate(m);
 }
 
 } // end namespace

@@ -24,6 +24,28 @@
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
+template <typename T>
+constexpr T kronecker_delta(std::size_t i, std::size_t j, T v = 1)
+{
+    return i == j ? v : T{};
+}
+
+template <typename ET, typename OT>
+constexpr auto trace(matrix<ET, OT> const& m) -> typename ET::element_type
+{
+    typename ET::element_type v{};
+    using detail::times;
+    for (auto ij : times(std::min(m.rows(), m.columns())))
+        v += m(ij, ij);
+    return v;
+}
+
+template <typename T, std::size_t N>
+constexpr fs_matrix<T, N, N> identity()
+{
+    return fs_matrix<T, N, N>([](auto i, auto j) { return kronecker_delta<T>(i, j); });
+}
+
 template <typename ET1, typename OT1, typename ET2, typename OT2>
 constexpr bool operator==(vector<ET1, OT1> const& v1, vector<ET2, OT2> const& v2) noexcept
 {

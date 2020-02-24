@@ -18,6 +18,31 @@
 
 #include <catch2/catch.hpp>
 
+namespace la = LINEAR_ALGEBRA_NAMESPACE;
+
+TEST_CASE("ext.identity")
+{
+    SECTION("fs_matrix")
+    {
+        auto CONSTEXPR m1 = la::identity<int, 3>();
+        CHECK(m1 == imat<3, 3>{1, 0, 0, 0, 1, 0, 0, 0, 1});
+    }
+
+    SECTION("dyn_matrix")
+    {
+        auto m1 = dmat<int>(math::identity<int, 3>());
+        CHECK(m1 == imat<3, 3>{1, 0, 0, 0, 1, 0, 0, 0, 1});
+    }
+}
+
+TEST_CASE("ext.trace")
+{
+    auto CONSTEXPR m1 = imat<3, 3>{ 1,   2,  4,
+                                    8,  16,  32,
+                                   64, 128, 256};
+    CHECK(la::trace(m1) == 273);
+}
+
 TEST_CASE("ext.ostream.matrix")
 {
     auto const m1 = imat<2, 3>{1, 2, 3,
@@ -65,3 +90,16 @@ TEST_CASE("ext.det")
     //     REQUIRE(d == -10);
     // }
 }
+
+TEST_CASE("ext.inverse")
+{
+    auto constexpr static m = imat<3, 3>{1, 2, 3,
+                                         0, 1, 4,
+                                         5, 6, 0};
+    REQUIRE(is_invertible(m));
+    auto const mi = la::inverse(m);
+    CHECK(mi == imat<3, 3>{-24,  18,  5,
+                            20, -15, -4,
+                            -5,  4,  1});
+}
+
