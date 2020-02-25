@@ -85,11 +85,11 @@ set(LINEAR_ALGEBRA_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/ext_det.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_matrix_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_vector_engine.h
-	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fwd.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/matrix.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/multiplication_traits.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/negation_traits.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/operation_traits.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/operation_traits_selector.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/row_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/scalar_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/submatrix_engine.h

@@ -137,8 +137,8 @@ class matrix {
             (*this)(i, j) = _init(i, j);
     }
 
-    constexpr matrix& operator=(matrix&&) noexcept = default;
-    constexpr matrix& operator=(matrix const&) = default;
+    constexpr matrix& operator=(matrix&&) noexcept(noexcept(std::is_nothrow_move_assignable_v<matrix>)) = default;
+    constexpr matrix& operator=(matrix const&) noexcept(noexcept(std::is_nothrow_move_assignable_v<matrix>)) = default;
 
     template <class ET2, class OT2>
     constexpr matrix& operator=(matrix<ET2, OT2> const& rhs)

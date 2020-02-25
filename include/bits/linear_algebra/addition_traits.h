@@ -15,7 +15,6 @@
 #pragma once
 
 #include "base.h"
-#include "fwd.h"
 #include "operation_traits_selector.h"
 
 namespace LINEAR_ALGEBRA_NAMESPACE {

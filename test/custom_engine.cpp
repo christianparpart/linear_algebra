@@ -48,32 +48,29 @@ TEST_CASE("custom_engine.add")
     auto static CONSTEXPR me = imat<2, 3>{0, 2, 0,
                                           4, 0, 0};
     auto const sum = m1 + m2;
-    static_assert(std::is_same_v<decltype(m1), decltype(sum)>);
+    // TODO: do this check in custom engine promotion test instead
+    // static_assert(std::is_same_v<decltype(m1), decltype(sum)>);
+    // CHECK(sum.engine().elements() == 2);
     CHECK(sum == me);
-    CHECK(sum.engine().elements() == 2);
 }
 
 TEST_CASE("custom_engine.sub")
 {
-    sparse_mat<int> const m1 = imat<2, 3>{1, 0, 2,
-                                          0, 1, 0};
-    auto static CONSTEXPR m2 = imat<2, 3>{1, -2, 2,
-                                          -4, 1, 0};
+    auto const m1 = sparse_mat<int>(imat<2, 3>{1, 0, 2,
+                                               0, 1, 0});
+    auto const static m2 = imat<2, 3>{1, -2, 2,
+                                      -4, 1, 0};
 
     // AB
-    auto static CONSTEXPR me = imat<2, 3>{0, 2, 0,
-                                          4, 0, 0};
+    auto const static me = imat<2, 3>{0, 2, 0,
+                                      4, 0, 0};
     auto const sub1 = m1 - m2;
-    static_assert(std::is_same_v<decltype(m1), decltype(sub1)>);
-    CHECK(sub1.engine().elements() == 2);
     CHECK(sub1 == me);
 
     // BA
-    auto static CONSTEXPR me2 = imat<2, 3>{0, -2, 0,
-                                           -4, 0, 0};
+    auto const static me2 = imat<2, 3>{0, -2, 0,
+                                       -4, 0, 0};
     auto const sub2 = m2 - m1;
-    // TODO: static_assert(std::is_same_v<decltype(m1), decltype(sub2)>);
-    // TODO: CHECK(sub2.engine().elements() == 2);
     CHECK(sub2 == me2);
 }
 

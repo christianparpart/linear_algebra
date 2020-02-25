@@ -15,7 +15,6 @@
 #pragma once
 
 #include "base.h"
-#include "fwd.h"
 #include <iostream>
 
 namespace LINEAR_ALGEBRA_NAMESPACE {

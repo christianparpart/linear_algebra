@@ -15,8 +15,8 @@
 #pragma once
 
 #include "base.h"
-#include "fwd.h"
 #include "operation_traits_selector.h"
+#include "dr_matrix_engine.h"
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
@@ -36,7 +36,6 @@ template <class OT, class ET1, class ET2>
 struct matrix_subtraction_engine_traits
 {
     using element_type = matrix_subtraction_element_t<OT, typename ET1::element_type, typename ET2::element_type>;
-    // using engine_type = matrix_operation_traits_selector_t<ET1, ET2>;
     using engine_type = ET1; // TODO
 };
 

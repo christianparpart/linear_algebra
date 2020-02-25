@@ -35,6 +35,20 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 
 using TODO = void*; // XXX well, yeah ...
 
+template <typename ET, typename OT> class vector;
+template <typename ET, typename OT> class matrix;
+
+template <typename T, size_t N> class fs_vector_engine;
+template <typename T, size_t R, size_t C> class fs_matrix_engine;
+
+template <typename T> struct scalar_engine;
+template <typename ET, typename OT> class row_engine;
+template <typename ET, typename OT> class column_engine;
+template <typename ET, typename OT> class transpose_engine;
+template <typename ET, typename OT> class submatrix_engine;
+
+struct matrix_operation_traits;
+
 //- Tags that describe engines and their capabilities.
 //
 struct scalar_engine_tag {};
@@ -82,6 +96,18 @@ template <class VCT> constexpr inline bool is_vector_engine_tag =
 template <class T> constexpr inline bool is_matrix_element_v =
     std::is_arithmetic_v<T> ||
     detail::is_complex_v<T>;
+
+// EXT: row_count_v<ET> evaluates to the number of rows of the given engine.
+template <typename ET> struct row_count;
+template <typename T, size_t R, size_t C> struct row_count<fs_matrix_engine<T, R, C>> { static constexpr size_t value = R; };
+template <typename T, size_t N> struct row_count<fs_vector_engine<T, N>> { static constexpr size_t value = N; };
+template <typename ET> constexpr inline size_t row_count_v = row_count<ET>::value;
+
+// EXT: column_count_v<ET> evaluates to the number of columns of the given engine.
+template <typename ET> struct column_count;
+template <typename T, size_t R, size_t C> struct column_count<fs_matrix_engine<T, R, C>> { static constexpr size_t value = R; };
+template <typename T, size_t N> struct column_count<fs_vector_engine<T, N>> { static constexpr size_t value = N; };
+template <typename ET> constexpr inline size_t column_count_v = column_count<ET>::value;
 
 // CRTP-style base class for matrix engines (well, and `matrix` class itself).
 template <class ET, class MCT>
