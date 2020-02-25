@@ -54,7 +54,6 @@ TEST_CASE("dr_matrix.resize")
     {
         auto m2 = m1;
         m2.resize(2, 1);
-        auto const me = imat<2, 1>{1, 2};
         CHECK(m2 == imat<2, 1>{1, 2});
     }
 
