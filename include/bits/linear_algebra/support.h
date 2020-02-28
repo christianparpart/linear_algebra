@@ -23,7 +23,7 @@
 #include <cstring>
 #include <tuple>
 
-#if defined(__linux__) || defined(__darwin__)
+#if defined(__linux__) || defined(__APPLE__)
 #include <cxxabi.h>
 #endif
 
@@ -31,7 +31,7 @@ namespace LINEAR_ALGEBRA_NAMESPACE::detail {
 
 inline std::string demangleSymbol(char const* _symbol)
 {
-#if defined(__linux__) || defined(__darwin__)
+#if defined(__linux__) || defined(__APPLE__)
   int status = 0;
   char* demangled = abi::__cxa_demangle(_symbol, nullptr, 0, &status);
 
