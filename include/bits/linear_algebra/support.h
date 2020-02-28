@@ -19,9 +19,34 @@
 #include <algorithm>
 #include <complex>
 #include <cstddef>
+#include <string>
+#include <cstring>
 #include <tuple>
 
+#if defined(__linux__) || defined(__darwin__)
+#include <cxxabi.h>
+#endif
+
 namespace LINEAR_ALGEBRA_NAMESPACE::detail {
+
+inline std::string demangleSymbol(char const* _symbol)
+{
+#if defined(__linux__) || defined(__darwin__)
+  int status = 0;
+  char* demangled = abi::__cxa_demangle(_symbol, nullptr, 0, &status);
+
+  if (demangled) {
+    std::string result(demangled, std::strlen(demangled));
+    free(demangled);
+    return result;
+  } else {
+    return _symbol;
+  }
+#else
+  return _symbol;
+#endif
+}
+
 
 template <typename T> struct is_complex : public std::false_type {};
 template <typename T> struct is_complex<std::complex<const T>> : public is_complex<T> {};
