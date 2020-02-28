@@ -116,6 +116,11 @@ template <typename ET> constexpr inline bool is_vector_engine_v =
 
 template <typename ET> constexpr inline bool is_engine_v = is_matrix_engine_v<ET> || is_vector_engine_v<ET>;
 
+template <typename ET> struct is_submatrix_engine : public std::false_type {};
+template <typename T, size_t R, size_t C, typename MCT> struct is_submatrix_engine<matrix_view_engine<fs_matrix_engine<T, R, C>, MCT, submatrix_view_tag>> : public std::true_type {};
+template <typename ET> constexpr inline bool is_submatrix_engine_v = is_submatrix_engine<ET>::value;
+// TODO: rename to is_fs_submatrix_engine_v
+
 template <typename VCT> constexpr inline bool is_vector_engine_tag =
     std::is_same_v<VCT, readable_vector_engine_tag> ||
     std::is_same_v<VCT, writable_vector_engine_tag> ||

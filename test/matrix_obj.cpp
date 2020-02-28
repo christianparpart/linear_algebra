@@ -16,7 +16,11 @@
 #include <linear_algebra>
 #include "support.h"
 
+#include <sstream>
+
 #include <catch2/catch.hpp>
+
+namespace la = LINEAR_ALGEBRA_NAMESPACE;
 
 TEST_CASE("matrix.ctor")
 {
@@ -99,11 +103,36 @@ TEST_CASE("matrix.submatrix")
                                             20, 21, 22, 23, 24,
                                             30, 31, 32, 33, 34};
     SECTION("single") {
-        auto static const m1 = base.submatrix(2, 3);
+        auto const m1 = base.submatrix(2, 3);
         auto static const me = imat<3, 4>{ 0,  1,  2,  4,
                                           10, 11, 12, 14,
                                           30, 31, 32, 34};
+        static_assert(
+            std::is_same_v<
+                std::remove_cvref_t<decltype(m1)::engine_type>,
+                la::matrix_view_engine<
+                    imat<4, 5>::engine_type,
+                    la::readable_matrix_engine_tag,
+                    la::submatrix_view_tag
+                >
+            >
+        );
         REQUIRE(m1 == me);
+
+        SECTION("nested") {
+            auto const m2 = m1.submatrix(1, 1);
+            auto static const r2 = imat<2, 3>{0,   2,  4,
+                                              30, 32, 34};
+            REQUIRE(m2 == r2);
+
+            auto const m3 = m2.submatrix(1, 1);
+            auto static const r3 = imat<1, 2>{0, 4};
+            std::cout
+                << "m3: " << la::detail::demangleSymbol(typeid(decltype(m3)).name()) << '\n'
+                << "m2: " << la::detail::demangleSymbol(typeid(decltype(m2)).name()) << '\n'
+                ;
+            CHECK(m3 == r3);
+        }
     }
 
     SECTION("multiple") {

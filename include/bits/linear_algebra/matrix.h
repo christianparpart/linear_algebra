@@ -62,7 +62,12 @@ class matrix {
     using row_type = vector<row_engine<ET, equiv_vector_engine_tag>, OT>;
     using const_row_type = vector<row_engine<ET, readable_vector_engine_tag>, OT>;
     using submatrix_type = matrix<submatrix_engine<ET, as_writable_matrix_engine_tag>, OT>;
-    using const_submatrix_type = matrix<submatrix_engine<ET, readable_matrix_engine_tag>, OT>;
+    using const_submatrix_type =
+        std::conditional_t<
+            false, // TODO: is_submatrix_engine_v<ET>,
+            matrix<submatrix_engine<typename ET::element_type, readable_matrix_engine_tag>, OT>,
+            matrix<submatrix_engine<ET, readable_matrix_engine_tag>, OT>
+        >;
     using transpose_type = matrix<transpose_engine<ET, as_writable_matrix_engine_tag>, OT>;
     using const_transpose_type = matrix<transpose_engine<ET, readable_matrix_engine_tag>, OT>;
     using hermitian_type = std::conditional_t<detail::is_complex_v<element_type>, matrix, transpose_type>;
@@ -191,6 +196,19 @@ class matrix {
                                              size_type ci, size_type cn) const noexcept {
         // TODO: if curreng engine is a submatrix already, optimize! (required for det(A))
         // ...
+        if constexpr (is_submatrix_engine_v<ET>)
+            return const_submatrix_type(
+                typename const_submatrix_type::engine_type(
+                    const_cast<ET*>(&engine_),
+                    ri,
+                    rn,
+                    ci,
+                    cn,
+                    engine_.rowMapping(),
+                    engine_.columnMapping()
+                )
+            );
+
         return const_submatrix_type(typename const_submatrix_type::engine_type(const_cast<ET*>(&engine_), ri, rn, ci, cn));
     }
     constexpr submatrix_type submatrix(size_type r, size_type c) noexcept { // EXT
