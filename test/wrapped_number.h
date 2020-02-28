@@ -24,25 +24,28 @@ class wrapped_number
 {
   public:
     constexpr wrapped_number() = default;
+
+    constexpr wrapped_number(T&& v) : value{std::forward<T>(v)} {}
+    constexpr wrapped_number(T const& v) : value{v} {}
+
     constexpr wrapped_number(wrapped_number&&) = default;
     constexpr wrapped_number(wrapped_number const&) = default;
+
     constexpr wrapped_number& operator=(wrapped_number&&) = default;
     constexpr wrapped_number& operator=(wrapped_number const&) = default;
-    template <typename U> constexpr wrapped_number& operator=(U&& v) { value = v; return *this; }
-    template <typename U> constexpr wrapped_number(U&& v) : value(std::forward<U>(v)) {}
 
-    constexpr T operator+() const noexcept { return +value; }
-    constexpr T operator-() const noexcept { return -value; }
+    constexpr wrapped_number operator+() const noexcept { return wrapped_number{+value}; }
+    constexpr wrapped_number operator-() const noexcept { return wrapped_number{-value}; }
 
-    constexpr T operator+(wrapped_number const& rhs) const noexcept { return value + rhs.value; }
-    constexpr T operator-(wrapped_number const& rhs) const noexcept { return value - rhs.value; }
-    constexpr T operator*(wrapped_number const& rhs) const noexcept { return value * rhs.value; }
-    constexpr T operator/(wrapped_number const& rhs) const noexcept { return value / rhs.value; }
+    constexpr wrapped_number operator+(wrapped_number const& rhs) const noexcept { return value + rhs.value; }
+    constexpr wrapped_number operator-(wrapped_number const& rhs) const noexcept { return value - rhs.value; }
+    constexpr wrapped_number operator*(wrapped_number const& rhs) const noexcept { return value * rhs.value; }
+    constexpr wrapped_number operator/(wrapped_number const& rhs) const noexcept { return value / rhs.value; }
 
-    constexpr T operator+=(wrapped_number const& rhs) const noexcept { value += rhs.value; return *this; }
-    constexpr T operator-=(wrapped_number const& rhs) const noexcept { value -= rhs.value; return *this; }
-    constexpr T operator*=(wrapped_number const& rhs) const noexcept { value *= rhs.value; return *this; }
-    constexpr T operator/=(wrapped_number const& rhs) const noexcept { value /= rhs.value; return *this; }
+    constexpr wrapped_number& operator+=(wrapped_number const& rhs) const noexcept { value += rhs.value; return *this; }
+    constexpr wrapped_number& operator-=(wrapped_number const& rhs) const noexcept { value -= rhs.value; return *this; }
+    constexpr wrapped_number& operator*=(wrapped_number const& rhs) const noexcept { value *= rhs.value; return *this; }
+    constexpr wrapped_number& operator/=(wrapped_number const& rhs) const noexcept { value /= rhs.value; return *this; }
 
     constexpr T get() const noexcept { return value; }
 

@@ -36,7 +36,12 @@ TEST_CASE("custom_engine.create")
 
 TEST_CASE("custom_engine.neg")
 {
-    // TODO
+    auto const m1 = sparse_mat<int>(imat<2, 3>{1, 0, -2,
+                                               0, -3, 0});
+    auto static constexpr me = imat<2, 3>{-1, 0, 2,
+                                           0, 3, 0};
+    auto const r1 = -m1;
+    CHECK(r1 == me);
 }
 
 TEST_CASE("custom_engine.add")
@@ -47,11 +52,10 @@ TEST_CASE("custom_engine.add")
                                           4, -1, 0};
     auto static CONSTEXPR me = imat<2, 3>{0, 2, 0,
                                           4, 0, 0};
-    auto const sum = m1 + m2;
-    // TODO: do this check in custom engine promotion test instead
-    // static_assert(std::is_same_v<decltype(m1), decltype(sum)>);
-    // CHECK(sum.engine().elements() == 2);
-    CHECK(sum == me);
+    auto const r1 = m1 + m2;
+    CHECK(r1 == me);
+    auto const r2 = m2 + m1;
+    CHECK(r2 == me);
 }
 
 TEST_CASE("custom_engine.sub")
@@ -64,14 +68,14 @@ TEST_CASE("custom_engine.sub")
     // AB
     auto const static me = imat<2, 3>{0, 2, 0,
                                       4, 0, 0};
-    auto const sub1 = m1 - m2;
-    CHECK(sub1 == me);
+    auto const r1 = m1 - m2;
+    CHECK(r1 == me);
 
     // BA
     auto const static me2 = imat<2, 3>{0, -2, 0,
                                        -4, 0, 0};
-    auto const sub2 = m2 - m1;
-    CHECK(sub2 == me2);
+    auto const r2 = m2 - m1;
+    CHECK(r2 == me2);
 }
 
 TEST_CASE("custom_engine.mul")

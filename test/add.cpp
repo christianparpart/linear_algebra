@@ -35,3 +35,18 @@ TEST_CASE("addition: matrix")
     auto static CONSTEXPR expected = imat<2, 2>{3, 5, 7, 9};
     REQUIRE(m3 == expected);
 }
+
+TEST_CASE("addition: fs dr")
+{
+    auto const fs = imat<2, 3>{1, 2, 3, 4, 5, 6};
+    auto const dr = dmat<int>(fs);
+    auto const re = dmat<int>(imat<2, 3>{2, 4, 6, 8, 10, 12});
+
+    auto const r1 = fs + dr;
+    static_assert(std::is_same_v<decltype(r1), decltype(dr)>, "result engine must be dyn_matrix");
+    CHECK(r1 == re);
+
+    auto const r2 = dr + fs;
+    static_assert(std::is_same_v<decltype(r2), decltype(dr)>, "result engine must be dyn_matrix");
+    CHECK(r2 == re);
+}

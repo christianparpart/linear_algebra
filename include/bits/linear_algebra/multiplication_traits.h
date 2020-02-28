@@ -88,6 +88,32 @@ struct matrix_multiplication_engine_traits<OT, fs_matrix_engine<T1, R1, C1>, fs_
     using engine_type = fs_matrix_engine<matrix_multiplication_element_t<OT, T1, T2>, R1, C2>;
 };
 
+// (fs * transpose)
+template <typename OT,
+          typename T1, std::size_t R1, std::size_t C1,
+          typename T2, typename MCT2, std::size_t R2, std::size_t C2>
+struct matrix_multiplication_engine_traits<OT,
+                                           fs_matrix_engine<T1, R1, C1>,
+                                           transpose_engine<fs_matrix_engine<T2, R2, C2>, MCT2>>
+{
+    static_assert(C1 == C2, "Matrix-matrix multiplication: left matrix column count must equal right matrix row count.");
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_matrix_engine<element_type, R1, R2>;
+};
+
+// (transpose(fs) * transpose(fs))
+template <typename OT,
+          typename T1, typename MCT1, std::size_t R1, std::size_t C1,
+          typename T2, typename MCT2, std::size_t R2, std::size_t C2>
+struct matrix_multiplication_engine_traits<OT,
+                                           transpose_engine<fs_matrix_engine<T1, R1, C1>, MCT1>,
+                                           transpose_engine<fs_matrix_engine<T2, R2, C2>, MCT2>>
+{
+    static_assert(R1 == C2, "Matrix-matrix multiplication: left matrix column count must equal right matrix row count.");
+    using element_type = matrix_multiplication_element_t<OT, T1, T2>;
+    using engine_type = fs_matrix_engine<element_type, C1, R2>;
+};
+
 template <class OT, class ET1, class ET2>
 using matrix_multiplication_engine_t =
     typename OT::template engine_multiplication_traits<

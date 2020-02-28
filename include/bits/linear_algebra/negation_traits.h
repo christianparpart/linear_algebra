@@ -53,7 +53,11 @@ struct matrix_negation_traits<OT, vector<ET1, OT1>>
     using result_type = vector<engine_type, op_traits>;
     constexpr static result_type negate(vector<ET1, OT1> const& v1)
     {
-        auto res = result_type(v1.size());
+        auto res = result_type{};
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            res.resize(v1.size());
+
         size_t i = 0;
         for (auto const& v : v1)
             res(i++) = -v;
@@ -69,7 +73,10 @@ struct matrix_negation_traits<OT, matrix<ET1, OT1>>
     using result_type = matrix<engine_type, op_traits>;
     constexpr static result_type negate(matrix<ET1, OT1> const& m1)
     {
-        result_type m{};
+        auto m = result_type{};
+
+        if constexpr (is_resizable_engine_v<engine_type>)
+            m.resize(m1.rows(), m1.columns());
 
         for (decltype(m1.rows()) i = 0; i < m1.rows(); ++i)
             for (decltype(m1.columns()) j = 0; j < m1.columns(); ++j)

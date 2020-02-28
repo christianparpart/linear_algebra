@@ -182,10 +182,15 @@ class matrix {
     constexpr row_type row(size_type i) noexcept { return row_type(typename row_type::engine_type(engine_, i)); }
     constexpr const_row_type row(size_type i) const noexcept { return const_row_type(typename const_row_type::engine_type(const_cast<ET&>(engine_), i)); }
     constexpr submatrix_type submatrix(size_type ri, size_type rn, size_type ci, size_type cn) noexcept {
+        // TODO: if curreng engine is a submatrix already, optimize! (required for det(A))
+        // submatrix<submatrix<fixed_matrix<T, R, C>>> can become submatrix<fixed_matrix<T, R, C>>
+        // but it requires submatrix_engine to be able to eliminate more than one range per direction.
         return submatrix_type(typename submatrix_type::engine_type(const_cast<ET&>(engine_), ri, rn, ci, cn));
     }
     constexpr const_submatrix_type submatrix(size_type ri, size_type rn,
                                              size_type ci, size_type cn) const noexcept {
+        // TODO: if curreng engine is a submatrix already, optimize! (required for det(A))
+        // ...
         return const_submatrix_type(typename const_submatrix_type::engine_type(const_cast<ET*>(&engine_), ri, rn, ci, cn));
     }
     constexpr submatrix_type submatrix(size_type r, size_type c) noexcept { // EXT

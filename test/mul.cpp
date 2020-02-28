@@ -87,3 +87,38 @@ TEST_CASE("multiplication: matrix * matrix")
 }
 
 // TODO: vector * matrix (where left hand side is treated as transposed vector, i.e. 1-row matrix)
+
+TEST_CASE("multiplication: fs * transpose(fs)")
+{
+    auto const f1 = imat<2, 3>{1, 2, 3,
+                               2, 3, 4};
+    auto const f2 = imat<4, 3>{1, 2, 3,
+                               2, 3, 4,
+                               3, 4, 5,
+                               4, 5, 6};
+    auto static CONSTEXPR me = imat<2, 4>{14, 20, 26, 32,
+                                          20, 29, 38, 47};
+    auto const t2 = f2.t();
+    auto const r1 = f1 * t2;
+    CHECK(r1 == me);
+    static_assert(std::is_same_v<decltype(r1), decltype(me)>);
+}
+
+TEST_CASE("multiplication: transpose(fs) * transpose(fs)")
+{
+    auto CONSTEXPR f1 = imat<3, 2>{1, 2,
+                                   2, 3,
+                                   3, 4};
+    auto CONSTEXPR f2 = imat<4, 3>{1, 2, 3,
+                                   2, 3, 4,
+                                   3, 4, 5,
+                                   4, 5, 6};
+    auto CONSTEXPR me = imat<2, 4>{14, 20, 26, 32,
+                                   20, 29, 38, 47};
+    auto const t1 = f1.t();
+    auto const t2 = f2.t();
+    auto const r1 = t1 * t2;
+    CHECK(r1 == me);
+    static_assert(std::is_same_v<decltype(r1), decltype(me)>);
+
+}

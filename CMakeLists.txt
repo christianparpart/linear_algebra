@@ -12,7 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ${MASTER_PROJECT})
 option(LINEAR_ALGEBRA_TESTING "linear_algebra: enables building of unit tests (requires catch2) [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
 option(LINEAR_ALGEBRA_EMBEDDED_CATCH2 "linear_algebra: uses embedded catch2 for testing [default: ${MASTER_PROJECT}]" ${MASTER_PROJECT})
 option(LINEAR_ALGEBRA_EMBEDDED_FMTLIB "linear_algebra: uses embedded fmtlib [default: ${MASTER_PROJECT}" ${MASTER_PROJECT})
-option(LINEAR_ALGEBRA_COVERAGE "linear_algebra: Builds with codecov [default: ${MASTER_PROJECT}]" ${MASTER_PROJECT})
+option(LINEAR_ALGEBRA_COVERAGE "linear_algebra: Builds with codecov [default: OFF]" OFF)
 
 # setting defaults
 if (NOT("${CMAKE_CXX_STANDARD}"))
@@ -123,8 +123,9 @@ if(LINEAR_ALGEBRA_TESTING)
         test/mul.cpp
         test/matrix_obj.cpp
         test/vector.cpp
-        test/custom_number.cpp
         test/custom_engine.cpp
+        test/custom_number.cpp
+        test/custom_operations.cpp
         test/ext.cpp
     )
     target_link_libraries(test_linear_algebra linear_algebra fmt::fmt-header-only Catch2::Catch2)

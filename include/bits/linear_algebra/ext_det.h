@@ -89,6 +89,7 @@ namespace detail { // {{{
 
 //template <typename T, typename AT, typename OT>
 //constexpr auto det(matrix<dr_matrix_engine<T, AT>, OT> const& m) // -> typename matrix<ET, OT>::value_type
+
 template <typename ET, typename OT>
 constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value_type
 {
@@ -111,8 +112,40 @@ constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value
     else if (m.rows() == 1)
         return m(0, 0);
     else
-        return m(0, 0); // TODO: det(A), Leibniz
+    {
+        //return value_type{}; // TODO: det(A), Leibniz (or can we get Laplace working)?
+        using detail::times;
+        using detail::reduce;
 
+        auto const [expansion_index, expandByRow] = detail::find_expansion_vector(m);
+
+        if (expandByRow)
+        {
+            std::size_t const i = expansion_index;
+            return reduce(
+                times(m.columns()),
+                0,
+                [&](auto acc, auto j) constexpr {
+                    return (i + j) % 2 == 0
+                        ? acc + m(i, j) * det(m.submatrix(i, j))
+                        : acc - m(i, j) * det(m.submatrix(i, j));
+                }
+            );
+        }
+        else // expand by row
+        {
+            std::size_t const j = expansion_index;
+            return reduce(
+                times(m.columns()),
+                0,
+                [&](auto acc, auto i) constexpr {
+                    return (i + j) % 2 == 0
+                        ? acc + m(i, j) * det(m.submatrix(i, j))
+                        : acc - m(i, j) * det(m.submatrix(i, j));
+                }
+            );
+        }
+    }
 }
 
 template <class OT, class T, std::size_t R, std::size_t C>

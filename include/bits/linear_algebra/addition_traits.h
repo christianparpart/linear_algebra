@@ -16,6 +16,8 @@
 
 #include "base.h"
 #include "operation_traits_selector.h"
+#include "dr_matrix_engine.h"
+#include "fs_matrix_engine.h"
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
@@ -26,7 +28,7 @@ template <class T1, class T2>
 struct matrix_addition_element_traits { using element_type = decltype(std::declval<T1>() + std::declval<T2>()); };
 
 template <class OT, class T1, class T2>
-using matrix_addition_element_t = typename OT::template element_addition_traits<T1, T2>;
+using matrix_addition_element_t = typename OT::template element_addition_traits<T1, T2>::element_type;
 
 // ---------------------------------------------------------------------------
 // 6.8.2 | engine promotion traits | matrix_addition_engine_traits<OT, ET1, ET2>
@@ -35,8 +37,44 @@ template <class OT, class ET1, class ET2>
 struct matrix_addition_engine_traits // | 4.8.2
 {
     using element_type = matrix_addition_element_t<OT, typename ET1::element_type, typename ET2::element_type>;
-    using engine_type = ET1; // TODO
+    using engine_type = ET1;
 };
+
+// (fs_matrix_engine + fs_matrix_engine)
+template <typename OT, typename T1, std::size_t R1, std::size_t C1, typename T2, std::size_t R2, std::size_t C2>
+struct matrix_addition_engine_traits<OT,
+                                     fs_matrix_engine<T1, R1, C1>,
+                                     fs_matrix_engine<T2, R2, C2>>
+{
+    static_assert(R1 == R2);
+    static_assert(C1 == C2);
+    using element_type = matrix_addition_element_t<OT, T1, T2>;
+    using engine_type = fs_matrix_engine<element_type, R1, C1>;
+};
+
+// (fs_matrix_engine + dr_matrix_engine)
+template <typename OT, typename T1, std::size_t R1, std::size_t C1, typename T2,
+    template <typename> class Allocator>
+struct matrix_addition_engine_traits<OT,
+                                     fs_matrix_engine<T1, R1, C1>,
+                                     dr_matrix_engine<T2, Allocator<T2>>>
+{
+    using element_type = matrix_addition_element_t<OT, T1, T2>;
+    using engine_type = dr_matrix_engine<element_type, std::allocator<element_type>>;
+};
+
+// (dr_matrix_engine + fs_matrix_engine)
+template <typename OT, typename T1, typename T2, std::size_t R2, std::size_t C2,
+         template<typename> class Allocator>
+struct matrix_addition_engine_traits<OT,
+                                     dr_matrix_engine<T1, Allocator<T1>>,
+                                     fs_matrix_engine<T2, R2, C2>>
+{
+    using element_type = matrix_addition_element_t<OT, T1, T2>;
+    using engine_type = dr_matrix_engine<element_type, Allocator<element_type>>;
+};
+
+// TODO: (transpose_engine + other)
 
 template <class OT, class ET1, class ET2>
 using matrix_addition_engine_t = typename OT::template engine_addition_traits<

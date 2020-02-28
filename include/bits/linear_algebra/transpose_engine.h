@@ -20,7 +20,7 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 
 // 6.4.7 | class transpose_engine<ET, MCT>
 template <class ET, class MCT>
-class transpose_engine : public matrix_engine<transpose_engine<ET, MCT>, MCT> {
+class transpose_engine {
   private:
     ET* engine_{};
 

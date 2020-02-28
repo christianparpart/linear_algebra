@@ -81,25 +81,27 @@ TEST_CASE("ext.det")
         REQUIRE(d == 100);
     }
 
-    // SECTION("fs.4x4") {
-    //     auto CONSTEXPR a = imat<4, 4>{4, 3, 2, 2,
-    //                                   0, 1, 0,-2,
-    //                                   1,-1, 0, 3,
-    //                                   2, 3, 0, 1};
-    //     auto CONSTEXPR d = det(a);
-    //     REQUIRE(d == -10);
-    // }
+    SECTION("fs.4x4") {
+        // TODO: for this to work I need to optimize
+        // submatrix_engine<submatrix_engine<ET>>> into a single submatrix_engine<ET>
+        auto const a = imat<4, 4>{4, 3, 2, 2,
+                                  0, 1, 0,-2,
+                                  1,-1, 0, 3,
+                                  2, 3, 0, 1};
+        auto const d = det(a);
+        REQUIRE(d == -10);
+    }
 }
 
-TEST_CASE("ext.inverse")
-{
-    auto constexpr static m = imat<3, 3>{1, 2, 3,
-                                         0, 1, 4,
-                                         5, 6, 0};
-    REQUIRE(is_invertible(m));
-    auto const mi = la::inverse(m);
-    CHECK(mi == imat<3, 3>{-24,  18,  5,
-                            20, -15, -4,
-                            -5,  4,  1});
-}
+// TEST_CASE("ext.inverse")
+// {
+//     auto constexpr static m = imat<3, 3>{1, 2, 3,
+//                                          0, 1, 4,
+//                                          5, 6, 0};
+//     REQUIRE(is_invertible(m));
+//     auto const mi = la::inverse(m);
+//     CHECK(mi == imat<3, 3>{-24,  18,  5,
+//                             20, -15, -4,
+//                             -5,  4,  1});
+// }
 
