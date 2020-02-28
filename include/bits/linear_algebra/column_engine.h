@@ -18,9 +18,9 @@
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
-// 6.4.5 | class column_engine<ET, VCT>
-template <class ET, class VCT>
-class column_engine {
+// 6.4.4
+template <typename ET, typename VCT>
+class vector_view_engine<ET, VCT, column_view_tag> {
     static_assert(is_matrix_engine_v<ET>);
     static_assert(is_vector_engine_tag<VCT>);
 
@@ -58,15 +58,15 @@ class column_engine {
 
     //- Construct/copy/destroy
     //
-    ~column_engine() noexcept = default;
-    constexpr column_engine() noexcept = default;
-    constexpr column_engine(column_engine&&) noexcept = default;
-    constexpr column_engine(column_engine const&) noexcept = default;
-    constexpr column_engine& operator=(column_engine&&) noexcept = default;
-    constexpr column_engine& operator=(column_engine const&) noexcept = default;
+    ~vector_view_engine() noexcept = default;
+    constexpr vector_view_engine() noexcept = default;
+    constexpr vector_view_engine(vector_view_engine&&) noexcept = default;
+    constexpr vector_view_engine(vector_view_engine const&) noexcept = default;
+    constexpr vector_view_engine& operator=(vector_view_engine&&) noexcept = default;
+    constexpr vector_view_engine& operator=(vector_view_engine const&) noexcept = default;
 
     // EXT
-    constexpr column_engine(ET& _engine, size_type _column) noexcept : engine_{&_engine}, column_{_column} {}
+    constexpr vector_view_engine(ET& _engine, size_type _column) noexcept : engine_{&_engine}, column_{_column} {}
 
     //- Iterators
     //
@@ -86,7 +86,7 @@ class column_engine {
 
     //- Modifiers
     //
-    constexpr void swap(column_engine& rhs)
+    constexpr void swap(vector_view_engine& rhs)
     {
         std::swap(column_, rhs.column_);
         std::swap(engine_, rhs.engine_);

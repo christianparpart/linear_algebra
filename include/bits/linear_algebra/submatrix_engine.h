@@ -18,9 +18,9 @@
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
-// 6.4.8 | class submatrix_engine<ET, MCT>
-template <class ET, class MCT>
-class submatrix_engine : public matrix_engine<submatrix_engine<ET, MCT>, MCT> {
+// 6.4.6
+template <typename ET, typename MCT>
+class matrix_view_engine<ET, MCT, submatrix_view_tag> {
   public:
     //- Types
     //
@@ -34,18 +34,22 @@ class submatrix_engine : public matrix_engine<submatrix_engine<ET, MCT>, MCT> {
     using difference_type = typename ET::difference_type;
     using size_type = typename ET::size_type;
     using size_tuple = typename ET::size_tuple;
+    using span_type = TODO; // implementation-defined ; (see note )
+    using const_span_type = TODO; // implementation-defined ; (see note )
 
     //- Construct/copy/destroy
     //
-    ~submatrix_engine() noexcept = default;
-    constexpr submatrix_engine() noexcept = default;
-    constexpr submatrix_engine(submatrix_engine&&) noexcept = default;
-    constexpr submatrix_engine(submatrix_engine const&) = default;
-    constexpr submatrix_engine& operator=(submatrix_engine&&) noexcept = default;
-    constexpr submatrix_engine& operator=(submatrix_engine const&) = default;
+    ~matrix_view_engine() noexcept = default;
+    constexpr matrix_view_engine();
+    constexpr matrix_view_engine(matrix_view_engine&&) noexcept = default;
+    constexpr matrix_view_engine(matrix_view_engine const&) noexcept = default;
+    constexpr matrix_view_engine& operator=(matrix_view_engine&&) noexcept = default;
+    constexpr matrix_view_engine& operator=(matrix_view_engine const&) noexcept = default;
+    template <typename ET2> constexpr matrix_view_engine& operator=(ET2 const& rhs);
+    template <typename U> constexpr matrix_view_engine& operator=(std::initializer_list<std::initializer_list<U>> list);
 
     // EXT
-    constexpr submatrix_engine(ET* _engine, size_type ri, size_type rn, size_type ci, size_type cn) noexcept :
+    constexpr matrix_view_engine(ET* _engine, size_type ri, size_type rn, size_type ci, size_type cn) noexcept :
         engine_{_engine}, ri_{ri}, rn_{rn}, ci_{ci}, cn_{cn}
     {}
 
@@ -72,9 +76,13 @@ class submatrix_engine : public matrix_engine<submatrix_engine<ET, MCT>, MCT> {
                 : (*engine_)(i + rn_, j + cn_);
     }
 
+    //- Data access
+    //
+    constexpr span_type span() const noexcept; // TODO
+
     //- Modifiers
     //
-    constexpr void swap(submatrix_engine& rhs)
+    constexpr void swap(matrix_view_engine& rhs)
     {
         std::swap(engine_, rhs.engine_);
         std::swap(ri_, rhs.ri_);
@@ -90,5 +98,6 @@ class submatrix_engine : public matrix_engine<submatrix_engine<ET, MCT>, MCT> {
     size_type ci_ = 0;
     size_type cn_ = 0;
 };
+
 
 } // end namespace

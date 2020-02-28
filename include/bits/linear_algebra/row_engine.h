@@ -18,9 +18,9 @@
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
-// 6.4.6 | class row_engine<ET, VCT>
-template <class ET, class VCT>
-class row_engine {
+// 6.4.5
+template <typename ET, typename VCT>
+class vector_view_engine<ET, VCT, row_view_tag> {
     static_assert(is_matrix_engine_v<ET>);
     static_assert(is_vector_engine_tag<VCT>);
 
@@ -58,15 +58,15 @@ class row_engine {
 
     //- Construct/copy/destroy
     //
-    ~row_engine() noexcept = default;
-    constexpr row_engine() noexcept;
-    constexpr row_engine(row_engine&&) noexcept = default;
-    constexpr row_engine(row_engine const&) noexcept = default;
-    constexpr row_engine& operator=(row_engine&&) noexcept = default;
-    constexpr row_engine& operator=(row_engine const&) noexcept = default;
+    ~vector_view_engine() noexcept = default;
+    constexpr vector_view_engine() noexcept;
+    constexpr vector_view_engine(vector_view_engine&&) noexcept = default;
+    constexpr vector_view_engine(vector_view_engine const&) noexcept = default;
+    constexpr vector_view_engine& operator=(vector_view_engine&&) noexcept = default;
+    constexpr vector_view_engine& operator=(vector_view_engine const&) noexcept = default;
 
     // EXT
-    constexpr row_engine(ET& _engine, size_type _row) noexcept : engine_{&_engine}, row_{_row} {}
+    constexpr vector_view_engine(ET& _engine, size_type _row) noexcept : engine_{&_engine}, row_{_row} {}
 
     //- Iterators
     //
@@ -86,7 +86,7 @@ class row_engine {
 
     //- Modifiers
     //
-    constexpr void swap(row_engine& rhs)
+    constexpr void swap(vector_view_engine& rhs)
     {
         std::swap(row_, rhs.row_);
         std::swap(engine_, rhs.engine_);

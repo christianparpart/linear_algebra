@@ -24,7 +24,7 @@
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
 // 6.4.1
-template<class T, class AT = std::allocator<T>>
+template<class T, class AT>
 class dr_vector_engine {
   private:
     std::vector<T, AT> elements_;

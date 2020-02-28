@@ -18,9 +18,9 @@
 
 namespace LINEAR_ALGEBRA_NAMESPACE {
 
-// 6.4.7 | class transpose_engine<ET, MCT>
+// 6.4.6
 template <class ET, class MCT>
-class transpose_engine {
+class matrix_view_engine<ET, MCT, transpose_view_tag> {
   private:
     ET* engine_{};
 
@@ -37,18 +37,20 @@ class transpose_engine {
     using difference_type = typename ET::difference_type;
     using size_type = typename ET::size_type;
     using size_tuple = typename ET::size_tuple;
+    using span_type = TODO; // implementation-defined ; (see note )
+    using const_span_type = TODO; // implementation-defined ; (see note )
 
     //- Construct/copy/destroy
     //
-    ~transpose_engine() noexcept = default;
-    constexpr transpose_engine() = default;
-    constexpr transpose_engine(transpose_engine&&) noexcept = default;
-    constexpr transpose_engine(transpose_engine const&) = default;
-    constexpr transpose_engine& operator=(transpose_engine&&) noexcept = default;
-    constexpr transpose_engine& operator=(transpose_engine const&) = default;
+    ~matrix_view_engine() noexcept = default;
+    constexpr matrix_view_engine() = default;
+    constexpr matrix_view_engine(matrix_view_engine&&) noexcept = default;
+    constexpr matrix_view_engine(matrix_view_engine const&) = default;
+    constexpr matrix_view_engine& operator=(matrix_view_engine&&) noexcept = default;
+    constexpr matrix_view_engine& operator=(matrix_view_engine const&) = default;
 
     // EXT
-    constexpr explicit transpose_engine(ET* e) : engine_{e} {}
+    constexpr explicit matrix_view_engine(ET* e) : engine_{e} {}
 
     //- Capacity
     //
@@ -66,9 +68,13 @@ class transpose_engine {
         return (*engine_)(j, i);
     }
 
+    //- Data access
+    //
+    constexpr span_type span() const noexcept; // TODO
+
     //- Modifiers
     //
-    constexpr void swap(transpose_engine& rhs)
+    constexpr void swap(matrix_view_engine& rhs)
     {
         std::swap(engine_, rhs.engine_);
     }
