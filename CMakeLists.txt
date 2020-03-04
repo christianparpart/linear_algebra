@@ -83,6 +83,7 @@ set(LINEAR_ALGEBRA_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/defs.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/ext.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/ext_det.h
+	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/ext_permutation.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_matrix_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/fs_vector_engine.h
 	${CMAKE_CURRENT_SOURCE_DIR}/include/bits/linear_algebra/matrix.h

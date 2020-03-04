@@ -25,7 +25,7 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 
 // 6.4.2
 template<class T, class AT>
-class dr_matrix_engine
+class dr_matrix_engine: public matrix_engine<dr_matrix_engine<T, AT>>
 {
   public:
     //- Types

@@ -18,6 +18,8 @@
 #include "matrix.h"
 #include "fs_matrix_engine.h"
 #include "dr_matrix_engine.h"
+#include "ext_permutation.h"
+#include "submatrix_engine.h"
 #include "support.h"
 #include "concepts.h"
 
@@ -87,18 +89,15 @@ namespace detail { // {{{
     }
 } // }}}
 
-//template <typename T, typename AT, typename OT>
-//constexpr auto det(matrix<dr_matrix_engine<T, AT>, OT> const& m) // -> typename matrix<ET, OT>::value_type
-
+#if 0 // {{{ det(A)
 template <typename ET, typename OT>
 constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value_type
 {
     using detail::times;
     using detail::reduce;
-    using value_type = typename matrix<ET, OT>::value_type;
 
     if (m.rows() != m.columns())
-        return value_type{};
+        return 0; // TODO
     else if (m.rows() == 3)
         return m(0, 0) * m(1, 1) * m(2, 2)
              + m(1, 0) * m(2, 1) * m(0, 2)
@@ -113,7 +112,6 @@ constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value
         return m(0, 0);
     else
     {
-        //return value_type{}; // TODO: det(A), Leibniz (or can we get Laplace working)?
         using detail::times;
         using detail::reduce;
 
@@ -148,8 +146,8 @@ constexpr auto det(matrix<ET, OT> const& m) // -> typename matrix<ET, OT>::value
     }
 }
 
-template <class OT, class T, std::size_t R, std::size_t C>
-constexpr T det(matrix<fs_matrix_engine<T, R, C>, OT> const& a) LA_CONCEPT(R == C)
+template <class T, std::size_t R, std::size_t C>
+constexpr T det(matrix<fs_matrix_engine<T, R, C>> const& a) LA_CONCEPT(R == C)
 {
     using detail::times;
     using detail::reduce;
@@ -183,19 +181,20 @@ constexpr T det(matrix<fs_matrix_engine<T, R, C>, OT> const& a) LA_CONCEPT(R == 
         );
     }
 }
+#endif // }}}
 
-template <class OT, class T> constexpr T det(matrix<fs_matrix_engine<T, 1, 1>, OT> const& m)
+template <class T, class OT> constexpr T det(matrix<fs_matrix_engine<T, 1, 1>, OT> const& m)
 {
     return m(0, 0);
 }
 
-template <class OT, class T> constexpr T det(matrix<fs_matrix_engine<T, 2, 2>, OT> const& m)
+template <class T, class OT> constexpr T det(matrix<fs_matrix_engine<T, 2, 2>, OT> const& m)
 {
     return m(0, 0) * m(1, 1)
          - m(1, 0) * m(0, 1);
 }
 
-template <class OT, class T> constexpr T det(matrix<fs_matrix_engine<T, 3, 3>, OT> const& m)
+template <class T, class OT> constexpr T det(matrix<fs_matrix_engine<T, 3, 3>, OT> const& m)
 {
     return m(0, 0) * m(1, 1) * m(2, 2)
          + m(1, 0) * m(2, 1) * m(0, 2)
@@ -204,6 +203,40 @@ template <class OT, class T> constexpr T det(matrix<fs_matrix_engine<T, 3, 3>, O
          - m(2, 1) * m(1, 2) * m(0, 0)
          - m(2, 2) * m(1, 0) * m(0, 1);
 }
+
+template <class T, class OT, std::size_t N> constexpr T det(matrix<fs_matrix_engine<T, N, N>, OT> const& m)
+{
+    return detail::reduce(
+        permutation<N>::all(),
+        T{},
+        [&](T acc, auto const& pi) {
+            return acc + sgn(pi) * detail::reduce(
+                detail::times(1, pi.size()),
+                T{1},
+                [&](auto a, auto i) constexpr { return a * m(i - 1, pi(i) - 1); });
+        }
+    );
+}
+
+template <class T, class OT, std::size_t N> constexpr T det(
+    matrix<submatrix_engine<fs_matrix_engine<T, N, N>,
+                            typename fs_matrix_engine<T, N, N>::engine_category>, OT> const& m)
+{
+    return detail::reduce(
+        permutation<N>::all(),
+        T{},
+        [&](T acc, auto const& pi) {
+            return acc + sgn(pi) * detail::reduce(
+                detail::times(1, pi.size()),
+                T{1},
+                [&](auto a, auto i) constexpr { return a * m(i - 1, pi(i) - 1); });
+        }
+    );
+}
+
+#if 1 // {{{ det(A) Leibnitz
+
+#endif // }}}
 
 /// Tests whether or not given matrix is invertible.
 template <typename ET, typename OT>
@@ -254,10 +287,10 @@ constexpr auto inverse(matrix<ET, OT> const& m)
     // if constexpr (is_fixed_size_engine_v<ET>)
     //     static_assert(is_invertible(m));
 
-    auto const zero = typename ET::value_type{};
     auto const detM = det(m);
-    if (detM == zero)
-        throw std::domain_error{"Given matrix is not invertible."};
+    // auto const zero = typename ET::value_type{};
+    // if (detM == zero)
+    //     throw std::domain_error{"Given matrix is not invertible."};
 
     auto const one = typename ET::value_type(1);
     return one / detM * adjugate(m);

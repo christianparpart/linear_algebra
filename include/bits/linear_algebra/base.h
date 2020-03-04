@@ -117,7 +117,16 @@ template <typename ET> constexpr inline bool is_vector_engine_v =
 template <typename ET> constexpr inline bool is_engine_v = is_matrix_engine_v<ET> || is_vector_engine_v<ET>;
 
 template <typename ET> struct is_submatrix_engine : public std::false_type {};
-template <typename T, size_t R, size_t C, typename MCT> struct is_submatrix_engine<matrix_view_engine<fs_matrix_engine<T, R, C>, MCT, submatrix_view_tag>> : public std::true_type {};
+// template <typename E, typename MCT>
+//     struct is_submatrix_engine<matrix_view_engine<E, MCT, submatrix_view_tag>>
+//         : public std::true_type {};
+// template <typename T, size_t R, size_t C, typename MCT>
+//     struct is_submatrix_engine<
+//             matrix_view_engine<
+//                 fs_matrix_engine<T, R, C>,
+//                 MCT,
+//                 submatrix_view_tag>>
+//         : public std::true_type {};
 template <typename ET> constexpr inline bool is_submatrix_engine_v = is_submatrix_engine<ET>::value;
 // TODO: rename to is_fs_submatrix_engine_v
 
@@ -143,16 +152,15 @@ template <typename T, size_t N> struct column_count<fs_vector_engine<T, N>> { st
 template <typename ET> constexpr inline size_t column_count_v = column_count<ET>::value;
 
 // CRTP-style base class for matrix engines (well, and `matrix` class itself).
-template <typename ET, typename MCT>
+template <class ET>
 class matrix_engine {
   public:
-    using engine_category = MCT;
     using size_type = std::size_t;
 
     //- Typed accessor to the actual engine type.
     //
     constexpr ET& engine() noexcept { return static_cast<ET&>(*this); }
-    constexpr ET& engine() const noexcept { return static_cast<ET const&>(*this); }
+    constexpr ET const& engine() const noexcept { return static_cast<ET const&>(*this); }
 
     //- Capacity
     //
@@ -166,10 +174,29 @@ class matrix_engine {
     //- Element access
     //
     constexpr decltype(auto) operator()(size_type i, size_type j) const { return engine()(i, j); }
+    constexpr decltype(auto) operator()(size_type i, size_type j) { return engine()(i, j); }
+
+    //- Columns, rows, submatrices, transposes, and the Hermitian
+    //
+    // constexpr decltype(auto) submatrix(size_type ri, size_type ci) noexcept {
+    //     return engine().submatrix(ri, 1, ci, 1);
+    // }
+    //
+    // constexpr decltype(auto) submatrix(size_type ri, size_type rn, size_type ci, size_type cn) noexcept {
+    //     return engine().submatrix(ri, rn, ci, cn);
+    // }
+    //
+    // constexpr decltype(auto) submatrix(size_type ri, size_type ci) const noexcept {
+    //     return engine().submatrix(ri, 1, ci, 1);
+    // }
+    //
+    // constexpr decltype(auto) submatrix(size_type ri, size_type rn, size_type ci, size_type cn) const noexcept {
+    //     return engine().submatrix(ri, rn, ci, cn);
+    // }
 
     //- Modifiers
     //
-    constexpr void swap(matrix_engine<ET, MCT>& rhs) { engine().swap(rhs); }
+    constexpr void swap(matrix_engine<ET>& rhs) { engine().swap(rhs); }
 };
 
 } // end namespace

@@ -61,10 +61,16 @@ class matrix {
     using const_column_type = vector<column_engine<ET, readable_vector_engine_tag>, OT>;
     using row_type = vector<row_engine<ET, equiv_vector_engine_tag>, OT>;
     using const_row_type = vector<row_engine<ET, readable_vector_engine_tag>, OT>;
-    using submatrix_type = matrix<submatrix_engine<ET, as_writable_matrix_engine_tag>, OT>;
+    using submatrix_type =
+        //matrix<submatrix_engine<ET, as_writable_matrix_engine_tag>, OT>;
+        std::conditional_t<
+            is_submatrix_engine_v<ET>,
+            matrix<submatrix_engine<typename ET::element_type, as_writable_matrix_engine_tag>, OT>,
+            matrix<submatrix_engine<ET, readable_matrix_engine_tag>, OT>
+        >;
     using const_submatrix_type =
         std::conditional_t<
-            false, // TODO: is_submatrix_engine_v<ET>,
+            is_submatrix_engine_v<ET>,
             matrix<submatrix_engine<typename ET::element_type, readable_matrix_engine_tag>, OT>,
             matrix<submatrix_engine<ET, readable_matrix_engine_tag>, OT>
         >;
@@ -208,8 +214,8 @@ class matrix {
                     engine_.columnMapping()
                 )
             );
-
-        return const_submatrix_type(typename const_submatrix_type::engine_type(const_cast<ET*>(&engine_), ri, rn, ci, cn));
+        else
+            return const_submatrix_type(typename const_submatrix_type::engine_type(const_cast<ET*>(&engine_), ri, rn, ci, cn));
     }
     constexpr submatrix_type submatrix(size_type r, size_type c) noexcept { // EXT
         return submatrix(r, 1, c, 1);

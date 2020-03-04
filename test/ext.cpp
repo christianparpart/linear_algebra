@@ -45,8 +45,8 @@ TEST_CASE("ext.trace")
 
 TEST_CASE("ext.ostream.matrix")
 {
-    auto const m1 = imat<2, 3>{1, 2, 3,
-                               4, 5, 6};
+    auto CONSTEXPR m1 = imat<2, 3>{1, 2, 3,
+                                   4, 5, 6};
     auto os = std::ostringstream{};
     os << m1;
     CHECK(os.str() == "{{1, 2, 3}, {4, 5, 6}}");
@@ -54,7 +54,7 @@ TEST_CASE("ext.ostream.matrix")
 
 TEST_CASE("ext.ostream.vector")
 {
-    auto const v1 = ivec<3>{1, 2, 3};
+    auto CONSTEXPR v1 = ivec<3>{1, 2, 3};
     auto os = std::ostringstream{};
     os << v1;
     CHECK(os.str() == "(1, 2, 3)");
@@ -82,20 +82,18 @@ TEST_CASE("ext.det")
     }
 
     SECTION("fs.4x4") {
-        // TODO: for this to work I need to optimize
-        // submatrix_engine<submatrix_engine<ET>>> into a single submatrix_engine<ET>
-        auto const a = imat<4, 4>{4, 3, 2, 2,
-                                  0, 1, 0,-2,
-                                  1,-1, 0, 3,
-                                  2, 3, 0, 1};
-        // auto const d = det(a);
-        // REQUIRE(d == -10);
+        auto CONSTEXPR a = imat<4, 4>{4, 3, 2, 2,
+                                      0, 1, 0,-2,
+                                      1,-1, 0, 3,
+                                      2, 3, 0, 1};
+        auto const d = det(a);
+        REQUIRE(d == -10);
     }
 }
 
-// TEST_CASE("ext.inverse")
+// TEST_CASE("ext.inverse") // TODO
 // {
-//     auto constexpr static m = imat<3, 3>{1, 2, 3,
+//     auto CONSTEXPR static m = imat<3, 3>{1, 2, 3,
 //                                          0, 1, 4,
 //                                          5, 6, 0};
 //     REQUIRE(is_invertible(m));
@@ -104,4 +102,49 @@ TEST_CASE("ext.det")
 //                             20, -15, -4,
 //                             -5,  4,  1});
 // }
+
+TEST_CASE("ext.permutation.identity")
+{
+    auto CONSTEXPR pi = la::permutation<3>::identity();
+    std::cout << "pi: " << la::simple_form(pi) << '\n';
+    std::cout << "pi: " << la::canonical_form(pi) << '\n';
+    CHECK(pi(1) == 1);
+    CHECK(pi(2) == 2);
+    CHECK(pi(3) == 3);
+    CHECK(la::simple_form(pi) == "(1 1) (2 2) (3 3)");
+}
+
+TEST_CASE("ext.permutation.transpositions")
+{
+    auto CONSTEXPR pi = la::permutation<6>{{5, 1}, {1, 2}, {2, 5}, {3, 4}, {4, 3}};
+    auto const xi = la::canonical_form(pi);
+    CHECK(xi == "(6) (5 1 2) (4 3)");
+}
+
+TEST_CASE("ext.permutation.all")
+{
+    auto const pa = la::permutation<3>::all();
+    REQUIRE(pa.size() == 6);
+    for (auto const& p : pa)
+        std::cout << "p: " << p << '\n';
+    // TODO: validate all
+}
+
+TEST_CASE("ext.permutation.composition")
+{
+    auto CONSTEXPR a = la::permutation<4>{2, 3, 1, 4};
+    auto CONSTEXPR b = la::permutation<4>{3, 2, 4, 1};
+    auto CONSTEXPR c = a * b;
+    auto CONSTEXPR d = la::permutation<4>{1, 3, 4, 2};
+    CHECK(c == d);
+}
+
+TEST_CASE("ext.permutation.inverse")
+{
+    auto CONSTEXPR a = la::permutation<4>{2, 3, 1, 4};
+    auto CONSTEXPR b = la::inverse(a);
+    auto CONSTEXPR c = a * b;
+    auto CONSTEXPR I = la::permutation<4>::identity();
+    CHECK(c == I);
+}
 

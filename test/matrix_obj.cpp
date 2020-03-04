@@ -127,10 +127,13 @@ TEST_CASE("matrix.submatrix")
 
             auto const m3 = m2.submatrix(1, 1);
             auto static const r3 = imat<1, 2>{0, 4};
-            std::cout
-                << "m3: " << la::detail::demangleSymbol(typeid(decltype(m3)).name()) << '\n'
-                << "m2: " << la::detail::demangleSymbol(typeid(decltype(m2)).name()) << '\n'
-                ;
+            std::cout << "m1: " << m1 << '\n';
+            std::cout << "m2: " << m2 << '\n';
+            std::cout << "m3: " << m3 << '\n';
+            // std::cout
+            //     << "m3: " << la::detail::demangleSymbol(typeid(decltype(m3)).name()) << '\n'
+            //     << "m2: " << la::detail::demangleSymbol(typeid(decltype(m2)).name()) << '\n'
+            //     ;
             CHECK(m3 == r3);
         }
     }

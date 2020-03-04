@@ -101,7 +101,9 @@ TEST_CASE("multiplication: fs * transpose(fs)")
     auto const t2 = f2.t();
     auto const r1 = f1 * t2;
     CHECK(r1 == me);
-    static_assert(std::is_same_v<decltype(r1), decltype(me)>);
+    static_assert(r1.rows() == me.rows());
+    static_assert(r1.columns() == me.columns());
+    static_assert(std::is_same_v<std::remove_cv_t<decltype(r1)>, imat<2, 4>>);
 }
 
 TEST_CASE("multiplication: transpose(fs) * transpose(fs)")

@@ -20,7 +20,8 @@ namespace LINEAR_ALGEBRA_NAMESPACE {
 
 // 6.4.6
 template <typename ET, typename MCT>
-class matrix_view_engine<ET, MCT, submatrix_view_tag> {
+class matrix_view_engine<ET, MCT, submatrix_view_tag>
+{
   public:
     //- Types
     //
@@ -91,12 +92,18 @@ class matrix_view_engine<ET, MCT, submatrix_view_tag> {
         std::swap(cn_, rhs.cn_);
     }
 
+    // EXT
+    constexpr std::vector<size_type> const& rowMapping() const noexcept { return rowMapping_; }
+    constexpr std::vector<size_type> const& columnMapping() const noexcept { return columnMapping_; }
+
   private:
     ET* engine_ = nullptr;
     size_type ri_ = 0;
     size_type rn_ = 0;
     size_type ci_ = 0;
     size_type cn_ = 0;
+    std::vector<size_type> rowMapping_;
+    std::vector<size_type> columnMapping_;
 };
 
 template <typename T, size_t R, size_t C, typename MCT>
@@ -135,6 +142,7 @@ class matrix_view_engine<fs_matrix_engine<T, R, C>, MCT, submatrix_view_tag> {
         rowCount_{R - rn},
         columnCount_{C - cn}
     {
+        printf("submatrix_engine<%zu, %zu>\n", R - rn, C - rn);
         using detail::times;
         for (size_type const i : times(R))
             rowMapping_[i] = i < ri ? i : i + rn;
@@ -245,14 +253,13 @@ class matrix_view_engine<
     }
 
     // EXT
-    constexpr matrix_view_engine(
-            ET* _engine,
-            size_type ri,
-            size_type rn,
-            size_type ci,
-            size_type cn,
-            std::array<size_type, R> _rowMapping,
-            std::array<size_type, C> _columnMapping) :
+    constexpr matrix_view_engine(ET* _engine,
+                                 size_type ri,
+                                 size_type rn,
+                                 size_type ci,
+                                 size_type cn,
+                                 std::array<size_type, R> _rowMapping,
+                                 std::array<size_type, C> _columnMapping) :
         engine_{_engine},
         rowCount_{_engine->rows() - rn},
         columnCount_{_engine->columns() - cn},
@@ -297,6 +304,10 @@ class matrix_view_engine<
         std::swap(rowMapping_, rhs.rowMapping_);
         std::swap(columnMapping_, rhs.columnMapping_);
     }
+
+    // EXT
+    constexpr std::array<size_type, R> const& rowMapping() const noexcept { return rowMapping_; }
+    constexpr std::array<size_type, C> const& columnMapping() const noexcept { return columnMapping_; }
 
   private:
     ET* engine_ = nullptr;
