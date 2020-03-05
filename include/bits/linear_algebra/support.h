@@ -313,7 +313,7 @@ constexpr T reduce(Container&& _container, T&& _init, BinaryOp _binaryOp)
 
 // TODO: each version with ExecutionPolicy
 
-namespace impl {
+namespace impl { // {{{
     template <typename Container>
     struct indexed {
         Container& container;
@@ -322,49 +322,49 @@ namespace impl {
             typename Container::iterator iter;
             std::size_t index = 0;
 
-            iterator& operator++()
+            constexpr iterator& operator++()
             {
                 ++iter;
                 ++index;
                 return *this;
             }
 
-            iterator& operator++(int)
+            constexpr iterator& operator++(int)
             {
                 ++*this;
                 return *this;
             }
 
-            auto operator*() const { return std::make_pair(index, *iter); }
+            constexpr auto operator*() const { return std::make_pair(index, *iter); }
 
-            bool operator==(const iterator& rhs) const noexcept { return iter == rhs.iter; }
-            bool operator!=(const iterator& rhs) const noexcept { return iter != rhs.iter; }
+            constexpr bool operator==(const iterator& rhs) const noexcept { return iter == rhs.iter; }
+            constexpr bool operator!=(const iterator& rhs) const noexcept { return iter != rhs.iter; }
         };
 
         struct const_iterator {
             typename Container::const_iterator iter;
             std::size_t index = 0;
 
-            const_iterator& operator++()
+            constexpr const_iterator& operator++()
             {
                 ++iter;
                 ++index;
                 return *this;
             }
 
-            const_iterator& operator++(int)
+            constexpr const_iterator& operator++(int)
             {
                 ++*this;
                 return *this;
             }
 
-            auto operator*() const { return std::make_pair(index, *iter); }
+            constexpr auto operator*() const { return std::make_pair(index, *iter); }
 
-            bool operator==(const const_iterator& rhs) const noexcept { return iter == rhs.iter; }
-            bool operator!=(const const_iterator& rhs) const noexcept { return iter != rhs.iter; }
+            constexpr bool operator==(const const_iterator& rhs) const noexcept { return iter == rhs.iter; }
+            constexpr bool operator!=(const const_iterator& rhs) const noexcept { return iter != rhs.iter; }
         };
 
-        auto begin() const
+        constexpr auto begin() const
         {
             if constexpr (std::is_const<Container>::value)
                 return const_iterator{container.cbegin()};
@@ -372,7 +372,7 @@ namespace impl {
                 return iterator{container.begin()};
         }
 
-        auto end() const
+        constexpr auto end() const
         {
             if constexpr (std::is_const<Container>::value)
                 return const_iterator{container.cend()};
@@ -380,18 +380,48 @@ namespace impl {
                 return iterator{container.end()};
         }
     };
-}
+} // }}}
 
 template <typename Container>
-inline auto indexed(Container const& c)
+constexpr auto indexed(Container const& c)
 {
 	return typename std::add_const<impl::indexed<const Container>>::type{c};
 }
 
 template <typename Container>
-inline auto indexed(Container& c)
+constexpr auto indexed(Container& c)
 {
 	return impl::indexed<Container>{c};
+}
+
+template <typename Container, typename Sep, typename Value>
+constexpr void joined(Container c, Sep sep, Value val)
+{
+    for (auto && [i, v] : indexed(c))
+    {
+        if (i) sep();
+        val(v);
+    }
+}
+
+template <typename Acc, typename Container, typename Sep, typename Value>
+constexpr Acc joined(Container c, Acc&& acc, Sep sep, Value val)
+{
+    for (auto && [i, v] : indexed(c))
+    {
+        if (i) sep(acc);
+        val(acc, v);
+    }
+    return std::move(acc);
+}
+
+template <typename Acc, typename Begin, typename Mid, typename End>
+constexpr Acc wrapped(Acc&& acc, Begin beg, Mid mid, End end)
+{
+    beg(acc);
+    mid(acc);
+    end(acc);
+    return std::move(acc);
 }
 
 } // end namespace

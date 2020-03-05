@@ -97,20 +97,6 @@ class permutation;
 
 // {{{ free functions
 template <std::size_t N>
-std::string simple_form(permutation<N> const& pi)
-{
-    std::stringstream s;
-    for (auto n : detail::times(1, pi.size()))
-    {
-        if (n > 1)
-            s << ' ';
-
-        s << '(' << n << ' ' << pi(n) << ')';
-    }
-    return s.str();
-}
-
-template <std::size_t N>
 auto to_map(permutation<N> const& pi) -> std::map<typename permutation<N>::value_type,
                                                   typename permutation<N>::value_type>
 {
@@ -120,6 +106,34 @@ auto to_map(permutation<N> const& pi) -> std::map<typename permutation<N>::value
     for (std::size_t i : detail::times(1, pi.size()))
         m[i] = pi(i);
     return m;
+}
+
+template <std::size_t N>
+std::string raw_form(permutation<N> const& pi)
+{
+    return detail::wrapped(
+        std::stringstream{},
+        [](auto& s) { s << '('; },
+        [&](auto& s) {
+            detail::joined(
+                detail::times(1, pi.size()),
+                [&]() { s << ' '; },
+                [&](auto n) { s << pi(n); }
+            );
+        },
+        [](auto& s) { s << ')'; }
+    ).str();
+}
+
+template <std::size_t N>
+std::string simple_form(permutation<N> const& pi)
+{
+    return detail::joined(
+        detail::times(1, pi.size()),
+        std::stringstream{},
+        [](auto& s) { s << ' '; },
+        [&](auto& s, auto n) {s << '(' << n << ' ' << pi(n) << ')';}
+    ).str();
 }
 
 template<std::size_t N>
@@ -157,22 +171,20 @@ std::string canonical_form(permutation<N> const& pi)
     while (!pending.empty())
         cycles.emplace_back(build_cycle(largest_key(pending), pending));
 
-    std::stringstream s;
-    for (auto && [i, cycle] : detail::indexed(cycles))
-    {
-        if (i)
-            s << ' ';
-
-        s << '(';
-        for (auto && [j, ci] : detail::indexed(cycle))
-        {
-            if (j)
-                s << ' ';
-            s << ci;
+    return detail::joined(
+        cycles,
+        std::stringstream{},
+        [](auto& s) { s << ' '; },
+        [](auto& s, auto const& cycle) {
+            s << '(';
+            detail::joined(
+                cycle,
+                [&]() { s << ' '; },
+                [&](auto ci) { s << ci; }
+            );
+            s << ')';
         }
-        s << ')';
-    }
-    return s.str();
+    ).str();
 }
 
 template<std::size_t N>

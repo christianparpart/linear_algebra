@@ -106,8 +106,6 @@ TEST_CASE("ext.det")
 TEST_CASE("ext.permutation.identity")
 {
     auto CONSTEXPR pi = la::permutation<3>::identity();
-    std::cout << "pi: " << la::simple_form(pi) << '\n';
-    std::cout << "pi: " << la::canonical_form(pi) << '\n';
     CHECK(pi(1) == 1);
     CHECK(pi(2) == 2);
     CHECK(pi(3) == 3);
@@ -126,7 +124,7 @@ TEST_CASE("ext.permutation.all")
     auto const pa = la::permutation<3>::all();
     REQUIRE(pa.size() == 6);
     for (auto const& p : pa)
-        std::cout << "p: " << p << '\n';
+        std::cout << "p: " << raw_form(p) << '\n';
     // TODO: validate all
 }
 
