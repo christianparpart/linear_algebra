@@ -307,7 +307,7 @@ constexpr T reduce(Container&& _container, T&& _init, BinaryOp _binaryOp)
 {
     auto result = T{std::move(_init)};
     for (auto&& value : _container)
-        result = _binaryOp(result, value);
+        result = _binaryOp(std::move(result), value);
     return result;
 }
 

@@ -137,12 +137,12 @@ TEST_CASE("ext.permutation.composition")
     CHECK(c == d);
 }
 
-TEST_CASE("ext.permutation.inverse")
-{
-    auto CONSTEXPR a = la::permutation<4>{2, 3, 1, 4};
-    auto CONSTEXPR b = la::inverse(a);
-    auto CONSTEXPR c = a * b;
-    auto CONSTEXPR I = la::permutation<4>::identity();
-    CHECK(c == I);
-}
+// TEST_CASE("ext.permutation.inverse")
+// {
+//     auto CONSTEXPR a = la::permutation<4>{2, 3, 1, 4};
+//     auto CONSTEXPR b = la::inverse(a);
+//     auto CONSTEXPR c = a * b;
+//     auto CONSTEXPR I = la::permutation<4>::identity();
+//     CHECK(c == I);
+// }
 

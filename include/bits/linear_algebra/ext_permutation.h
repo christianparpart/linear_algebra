@@ -23,6 +23,7 @@
 #include <initializer_list>
 #include <list>
 #include <map>
+#include <numeric>
 #include <set>
 #include <sstream>
 #include <string>
@@ -352,12 +353,28 @@ constexpr permutation<N> inverse(permutation<N> const& p) noexcept
 template <std::size_t N>
 constexpr std::size_t failure_count(permutation<N> const& pi) noexcept
 {
+#if 1
     std::size_t c = 0;
     for (std::size_t n = 0; n <= N; ++n)
         for (std::size_t i = 0; i <= n; ++i)
             if (pi(i) > pi(n))
-                c += 1;
+                c++;
     return c;
+#else
+    return detail::reduce(
+        detail::times(pi.size()),
+        0,
+        [&pi](auto a, auto i) {
+            return std::reduce(
+                detail::times(i - 1),
+                a,
+                [&pi, i](auto a, auto j) {
+                    return pi(i) > pi(j) ? 1 : 0;
+                }
+            );
+        }
+    );
+#endif
 }
 
 template <std::size_t N>

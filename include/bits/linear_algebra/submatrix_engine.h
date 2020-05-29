@@ -41,7 +41,7 @@ class matrix_view_engine<ET, MCT, submatrix_view_tag>
     //- Construct/copy/destroy
     //
     ~matrix_view_engine() noexcept = default;
-    constexpr matrix_view_engine();
+    constexpr matrix_view_engine() noexcept = default;
     constexpr matrix_view_engine(matrix_view_engine&&) noexcept = default;
     constexpr matrix_view_engine(matrix_view_engine const&) noexcept = default;
     constexpr matrix_view_engine& operator=(matrix_view_engine&&) noexcept = default;
@@ -128,7 +128,7 @@ class matrix_view_engine<fs_matrix_engine<T, R, C>, MCT, submatrix_view_tag> {
     //- Construct/copy/destroy
     //
     ~matrix_view_engine() noexcept = default;
-    constexpr matrix_view_engine();
+    constexpr matrix_view_engine() noexcept = default;
     constexpr matrix_view_engine(matrix_view_engine&&) noexcept = default;
     constexpr matrix_view_engine(matrix_view_engine const&) noexcept = default;
     constexpr matrix_view_engine& operator=(matrix_view_engine&&) noexcept = default;
@@ -228,7 +228,7 @@ class matrix_view_engine<
     //- Construct/copy/destroy
     //
     ~matrix_view_engine() noexcept = default;
-    constexpr matrix_view_engine();
+    constexpr matrix_view_engine() noexcept = default;
     constexpr matrix_view_engine(matrix_view_engine&&) noexcept = default;
     constexpr matrix_view_engine(matrix_view_engine const&) noexcept = default;
     constexpr matrix_view_engine& operator=(matrix_view_engine&&) noexcept = default;

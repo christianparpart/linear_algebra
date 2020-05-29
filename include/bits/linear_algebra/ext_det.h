@@ -222,21 +222,21 @@ template <class T, class OT, std::size_t N> constexpr T det(
     matrix<submatrix_engine<fs_matrix_engine<T, N, N>,
                             typename fs_matrix_engine<T, N, N>::engine_category>, OT> const& m)
 {
+    printf("det with N=%zu, size=(%zu, %zu)\n", N, m.rows(), m.columns());
     return detail::reduce(
-        permutation<N>::all(),
+        permutation<N - 2>::all(),
         T{},
         [&](T acc, auto const& pi) {
             return acc + sgn(pi) * detail::reduce(
                 detail::times(1, pi.size()),
                 T{1},
-                [&](auto a, auto i) constexpr { return a * m(i - 1, pi(i) - 1); });
+                [&](auto a, auto i) constexpr {
+                    return a * m(i - 1, pi(i) - 1);
+                }
+            );
         }
     );
 }
-
-#if 1 // {{{ det(A) Leibnitz
-
-#endif // }}}
 
 /// Tests whether or not given matrix is invertible.
 template <typename ET, typename OT>
