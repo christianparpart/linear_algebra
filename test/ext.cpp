@@ -100,17 +100,35 @@ TEST_CASE("ext.det")
     }
 }
 
-// TEST_CASE("ext.inverse") // TODO
-// {
-//     auto CONSTEXPR static m = imat<3, 3>{1, 2, 3,
-//                                          0, 1, 4,
-//                                          5, 6, 0};
-//     REQUIRE(is_invertible(m));
-//     auto const mi = la::inverse(m);
-//     CHECK(mi == imat<3, 3>{-24,  18,  5,
-//                             20, -15, -4,
-//                             -5,  4,  1});
-// }
+#if 0
+TEST_CASE("ext.inverse") // TODO
+{
+    SECTION("1x1") {
+        auto CONSTEXPR static m = imat<1, 1>{1};
+        REQUIRE(is_invertible(m));
+        auto const mi = la::inverse(m);
+        CHECK(mi == imat<1, 1>{1});
+    }
+    SECTION("2x2") {
+        auto CONSTEXPR static m = imat<2, 2>{1, 1,
+                                             2, 3};
+        REQUIRE(is_invertible(m));
+        auto const mi = la::inverse(m);
+        CHECK(mi == imat<2, 2>{ 3, -1,
+                               -2, 1});
+    }
+    SECTION("3x3") {
+        auto CONSTEXPR static m = imat<3, 3>{1, 2, 3,
+                                            0, 1, 4,
+                                            5, 6, 0};
+        REQUIRE(is_invertible(m));
+        auto const mi = la::inverse(m);
+        CHECK(mi == imat<3, 3>{-24,  18,  5,
+                                20, -15, -4,
+                                -5,  4,  1});
+    }
+}
+#endif
 
 TEST_CASE("ext.permutation.identity")
 {
