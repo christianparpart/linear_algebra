@@ -89,6 +89,15 @@ TEST_CASE("ext.det")
         auto const d = det(a);
         REQUIRE(d == -10);
     }
+    SECTION("fs.5x5") {
+        auto CONSTEXPR a = imat<5, 5>{4, 3, 2, 2, 1,
+                                      0, 1, 0,-2, 1,
+                                      1,-1, 0, 3, 1,
+                                      2, 3, 0, 1, 1,
+                                      1, 1, 1, 1, 1};
+        auto const d = det(a);
+        REQUIRE(d == -30);
+    }
 }
 
 // TEST_CASE("ext.inverse") // TODO
